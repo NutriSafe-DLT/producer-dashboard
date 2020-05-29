@@ -1,0 +1,100 @@
+{
+    "extends": ["airbnb", "prettier", "prettier/react", "prettier/@typescript-eslint", "plugin:prettier/recommended"],
+    "parserOptions":  {
+      "ecmaVersion":  2018,  // Allows for the parsing of modern ECMAScript features
+      "sourceType":  "module"  // Allows for the use of imports
+    },
+    "parser":  "@typescript-eslint/parser",
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "singleQuote": true,
+          "tabWidth": 4,
+          "printWidth": 100
+        }
+      ],
+      "react/jsx-props-no-spreading": "off",
+      "react/prop-types": "off",
+      "react/jsx-no-duplicate-props": ["error", { "ignoreCase": false }],
+      "react/default-props-match-prop-types": "off",
+      "react/no-did-mount-set-state": "error",
+      "react/jsx-filename-extension": [
+        1,
+        {
+          "extensions": [".js", ".tsx"]
+        }
+      ],
+      "import/no-extraneous-dependencies": [
+        "error",
+        {
+          "devDependencies": [
+            "**/*.stories.js",
+            "**/*.stories.tsx",
+            "**/*.test.js",
+            "jest*.js",
+            "deploy.js",
+            "e2e_tests/**/*.js",
+            "test-utils/**/*.js"
+          ]
+        }
+      ],
+      "no-restricted-imports": [2, "lodash", "@material-ui/core"],
+      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+            "js": "never",
+            "jsx": "never",
+            "ts": "never",
+            "tsx": "never"
+            }
+       ]
+    },
+    "plugins": ["react", "prettier", "import", "@typescript-eslint", "react-hooks"],
+    "env": {
+      "browser": true,
+      "jest": true
+    },
+    "overrides": [
+      {
+        "files": [
+          "*.test.client.js",
+          "*.test.server.js",
+          "*.test.js",
+          "packages/**/universal/*.js"
+        ],
+        "rules": {
+          "global-require": 0,
+          "no-underscore-dangle": 0
+        }
+      },
+      {
+        "files": ["*.ts", "*.tsx"],
+        "rules": {
+          "@typescript-eslint/no-unused-vars": ["warn"]
+        }
+      },
+      {
+        "files": ["*.ts", "*.tsx"],
+        "rules": {
+          "@typescript-eslint/no-var-requires": ["error"]
+        }
+      }
+    ],
+    "globals": {},
+    "settings": {
+      "react": {
+        "version": "detect"
+      },
+      "import/resolver": {
+        "node": {
+          "extensions": [".js", ".jsx", ".ts", ".tsx", ".json"]
+        }
+      }
+    }
+  }
+  
