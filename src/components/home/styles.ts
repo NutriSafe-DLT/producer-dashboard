@@ -2,8 +2,8 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
    homeContainer: {
-    width: 944,
-    maxWidth: 944
+    width: 1024,
+    maxWidth: 1024
    },
    header: {
       marginBottom: 16
