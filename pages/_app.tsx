@@ -20,7 +20,7 @@ export default function MyApp(props: AppProps) {
     return (
         <>
             <Head>
-                <title>Honda</title>
+                <title>Producer Dashboard</title>
                 <meta
                     name="viewport"
                     content="minimum-scale=1, initial-scale=1, width=device-width"
