@@ -3,6 +3,7 @@ import Highcharts from "highcharts";
 import highchartsMore from "highcharts/highcharts-more.js";
 import solidGauge from "highcharts/modules/solid-gauge.js";
 import HighchartsReact from "highcharts-react-official";
+import hcolors from "../../highcharts-colors";
 
 if (typeof Highcharts === "object") {
   highchartsMore(Highcharts);
@@ -52,12 +53,12 @@ const ProgressCircle = ({ title, subtitle, percentage }: GaugeProps) => {
           formatter: function () {
             return (
               '<span style="font-size:2em;color:' +
-              Highcharts.getOptions().colors[0] +
+              hcolors[0] +
               ';font-weight:bold;">' +
               percentage +
               "%" +
               '</span><br/><span style="font-size:1em;color:' +
-              Highcharts.getOptions().colors[1] +
+              hcolors[1] +
               ';font-weight:bold;">' +
               subtitle +
               "</span>"
@@ -71,10 +72,10 @@ const ProgressCircle = ({ title, subtitle, percentage }: GaugeProps) => {
       {
         name: title,
         type: "solidgauge",
-        borderColor: Highcharts.getOptions().colors[1],
+        borderColor: hcolors[1],
         data: [
           {
-            color: Highcharts.getOptions().colors[0],
+            color: hcolors[0],
             radius: "110%",
             innerRadius: "90%",
             y: percentage,
