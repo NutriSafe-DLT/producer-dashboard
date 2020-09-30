@@ -49,6 +49,17 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </Grid>
+        <Grid item xs={4}>
+          <Card variant="outlined">
+            <CardContent>
+              <ProgressCircle
+                title="Wareneingänge"
+                subtitle="5 Tests"
+                percentage={60}
+              ></ProgressCircle>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
     </div>
   );
