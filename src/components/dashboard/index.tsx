@@ -7,6 +7,7 @@ import GoodsChart from "../charts/goods";
 import ProductionChart from "../charts/production";
 import DeliveryChart from "../charts/delivery";
 import ProgressCircle from "../charts/progress-circle";
+import ProductionNavigator from "./production-nav";
 
 const Dashboard = () => {
   const classes = useStyles();
@@ -17,7 +18,6 @@ const Dashboard = () => {
         <Grid item xs={4}>
           <Card variant="outlined">
             <CardContent>
-              Wareneingänge
               <div className={classes.goods}>
                 <GoodsChart />
               </div>
@@ -27,7 +27,6 @@ const Dashboard = () => {
         <Grid item xs={4}>
           <Card variant="outlined">
             <CardContent>
-              Produktionsprozesse
               <div className={classes.production}>
                 <ProductionChart />
               </div>
@@ -37,21 +36,20 @@ const Dashboard = () => {
         <Grid item xs={4}>
           <Card variant="outlined">
             <CardContent>
-              Produktionsprozesse
               <div className={classes.delivery}>
                 <DeliveryChart />
               </div>
             </CardContent>
           </Card>
         </Grid>
+        <Grid item xs={12}>
+          <Card variant="outlined">
+            <CardContent>
+              <ProductionNavigator></ProductionNavigator>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
-      <div className={classes.circle}>
-        <ProgressCircle
-          title="Wareneingänge"
-          subtitle="5 Proben"
-          percentage={60}
-        ></ProgressCircle>
-      </div>
     </div>
   );
 };

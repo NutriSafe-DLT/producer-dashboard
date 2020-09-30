@@ -2,24 +2,43 @@ import React, { useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 
-const ProductionChart = () => {
+type BarChartProps = {
+  title: string;
+  color: string;
+  flipped?: boolean;
+  xAxis: string[];
+  yAxis: number[];
+};
+
+const BarChart = ({
+  title = "",
+  color,
+  flipped = false,
+  xAxis = [],
+  yAxis = [],
+}: BarChartProps) => {
   const [hoverData, setHoverData] = useState(null);
   const [chartOptions, setChartOptions] = useState({
     chart: {
-      type: "area",
+      type: "bar",
     },
     title: {
-      text: "Produktionsprozesse",
+      text: title,
+    },
+    xAxis: {
+      categories: xAxis,
     },
     yAxis: {
+      reversed: flipped,
       min: 0,
       title: {
         text: "",
       },
     },
-    series: [{ data: [3, 4, 2, 6] }],
+    series: [{ data: yAxis }],
     plotOptions: {
       series: {
+        color: color,
         point: {
           events: {
             mouseOver(e) {
@@ -39,4 +58,4 @@ const ProductionChart = () => {
   );
 };
 
-export default ProductionChart;
+export default BarChart;
