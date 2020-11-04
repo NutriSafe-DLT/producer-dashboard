@@ -1,0 +1,4 @@
+{
+    "product":"cheese",
+    "attributes":["barcode","lotid","bestbefordate","state"]
+}
