@@ -100,7 +100,7 @@ def generate_object_links_produces( fromObjects, toObjects):
               if toObjects[toElementIndex]['amount'] < MAX_TARGET_PRODUCED_QUANTITY:
                   print('Target index ' + str(toElementIndex))
                   break
-            data['preIds'] = [ sourceProduct['id'] ]
+            data['preIds'] = sourceProduct['id']
             data['id'] = toObjects[toElementIndex]['id']
             numberOfTargetUnitsToCreate = sourceProduct['amount'] // LEFT_PROPORTION
             data['amountDif'] = -( numberOfTargetUnitsToCreate * LEFT_PROPORTION ) 
