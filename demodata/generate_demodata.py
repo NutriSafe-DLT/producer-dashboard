@@ -106,6 +106,7 @@ def generate_object_links_produces( fromObjects, toObjects):
             data['amountDif'] = -( numberOfTargetUnitsToCreate * LEFT_PROPORTION ) 
             toObjects[toElementIndex]['amount'] += numberOfTargetUnitsToCreate
             json_object = json.dumps(data, indent = 2)
+            print(json_object)
             api_postasadmin_with_method( 'addPredecessor' , json_object)
         if sourceProduct['amount'] > 0 and sourceProduct['amount'] < LEFT_PROPORTION:
             #We need a second product. This case is here for reference, not yet implemented.
