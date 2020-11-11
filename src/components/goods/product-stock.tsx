@@ -1,0 +1,110 @@
+import {
+  Box,
+  Button,
+  Collapse,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
+import { useEffect, useState } from "react";
+import React from "react";
+import productService from "../services/product-service";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
+import { Clear, KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
+
+interface StockItem {
+  alarmFlag: boolean;
+  amount: number;
+  key: string;
+  productName: string;
+  unit: string;
+  attributes: any;
+}
+
+function Row(props: { row: StockItem }) {
+  const { row } = props;
+  const [open, setOpen] = useState(false);
+
+  return (
+    <React.Fragment>
+      <TableRow>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </TableCell>
+        <TableCell>{row.productName}</TableCell>
+        <TableCell>{row.amount}</TableCell>
+        <TableCell>{row.unit}</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+              <Typography variant="h6" gutterBottom component="div">
+                Attributes
+              </Typography>
+
+              {Object.keys(row.attributes).map((objKey) => (
+                <Typography variant="subtitle1" gutterBottom component="div">
+                  {`${objKey}: ${row.attributes[objKey]}`}
+                </Typography>
+              ))}
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
+}
+
+const ProductStock = () => {
+  const [productState, setProductState] = useState<StockItem[]>([]);
+
+  useEffect(() => {
+    productService.productStock().then((res) => {
+      let array: StockItem[] = [];
+      res.data.map((element) => {
+        array.push(JSON.parse(element));
+      });
+      setProductState(array);
+    });
+    return () => setProductState([]);
+  }, []);
+
+  return (
+    <TableContainer>
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell />
+            <TableCell>Product</TableCell>
+            <TableCell>Amount</TableCell>
+            <TableCell>Unit</TableCell>
+          </TableRow>
+        </TableHead>
+        <tbody>
+          {productState.length != 0 ? (
+            productState.map((product: StockItem) => (
+              <Row key={product.key} row={product} />
+            ))
+          ) : (
+            <tr></tr>
+          )}
+        </tbody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+export default ProductStock;

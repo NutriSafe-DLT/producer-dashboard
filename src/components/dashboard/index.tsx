@@ -8,6 +8,7 @@ import ProductionChart from "../charts/production";
 import DeliveryChart from "../charts/delivery";
 import ProgressCircle from "../charts/progress-circle";
 import ProductionNavigator from "./production-nav";
+import AddGoods from "../goods/add-goods";
 
 const Dashboard = () => {
   const classes = useStyles();

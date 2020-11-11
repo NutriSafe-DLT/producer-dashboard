@@ -16,11 +16,11 @@ const ProductionNavigator = () => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Button variant="outlined" color="primary">
+      <Button variant="text" color="primary">
         <ArrowBackIosIcon />
       </Button>
       <ProductionStep></ProductionStep>
-      <Button variant="outlined" color="primary">
+      <Button variant="text" color="primary">
         <ArrowForwardIosIcon />
       </Button>
     </div>
