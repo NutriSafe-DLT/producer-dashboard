@@ -1,4 +1,5 @@
-#  
+# Author: Razvan Hrestic
+# Universitaet der Bundeswehr Muenchen
 import json 
 import random
 import http.client
@@ -6,21 +7,29 @@ import mimetypes
 import requests
 import os
 import time
+import getpass
 
 currentToken = 'NONE'
+ORGANIZATIONS_LIST = ["BrangusMSP","PinzgauerMSP"]
+apiPassword = ''
 
 def save_object(obj, filename):
     with open(filename, 'wb') as output:  # Overwrites any existing file.
         json.dump(obj, output)
 
 def init_demo_datastructures():
-    #init_demo_attributes()
-    #init_demo_units()
-    #init_demo_objects()
+    read_api_password()
+    init_demo_attributes()
+    init_demo_units()
+    init_demo_objects()
     milkObjects = generate_demo_objects( 'milk', 'milklot_product_template.json' )
     cheeseObjects = generate_demo_objects( 'cheese', 'cheese_product_template.json' )
      
     generate_object_links_produces( milkObjects, cheeseObjects )
+
+def read_api_password():
+    global apiPassword
+    apiPassword = getpass.getpass("Please enter the admin password for the REST API: ")
 
 def init_demo_attributes():
     files = [f for f in os.listdir('.') if os.path.isfile(f) and "attribute" in f]
@@ -114,7 +123,19 @@ def generate_object_links_produces( fromObjects, toObjects):
             print ('Amount too low, skipping production from this source: ' + sourceProduct['id'])
     fileRelationTemplate.close() 
 
+def generate_random_deliveries ( fromObjects, toOrganizations):
+    fileRelationTemplate = open ('setreceiver_relation_template.json', "r") 
+    data = json.loads( fileRelationTemplate.read() ) 
+    sourceObjectsList = fromObjects
+    for sourceProduct in sourceObjectsList:
+        data['id'] = sourceProduct['id']
+        data['receiver'] = assign_random_target_orga()
+        json_object = json.dumps(data, indent = 2)
+        api_postasadmin_with_method( 'setReceiver' , json_object)
+    fileRelationTemplate.close()
 
+def assign_random_target_orga ():
+    return random.choice( ORGANIZATIONS_LIST )
 
 def api_postasadmin_with_method(methodname, payload):
     API_ENDPOINT = 'http://137.193.65.47:8080/submit?function=' + methodname
@@ -143,9 +164,12 @@ def api_postasadmin_with_method(methodname, payload):
 
 def get_auth_token():
     API_ENDPOINT = 'http://137.193.65.47:8080/auth'
+    if (apiPassword.count < 1):
+        print("Aborting, password empty or too short...")
+        return False
     # data to be sent to api 
     data = {'username':'admin', 
-            'password':'L2vmRsEmFb4gTU2L' 
+            'password':apiPassword
            }  
     # sending post request and saving response as response object 
     r = requests.post(url = API_ENDPOINT, data = json.dumps(data)) 
