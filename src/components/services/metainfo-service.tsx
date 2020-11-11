@@ -20,6 +20,31 @@ class MetaInfoService {
     //   },
     // };
   }
+
+  createProductDef(productName: string, attributeList: string[]) {
+    return instance.post(
+      "/submit?function=META_addProductDefinition",
+      {
+        product: productName,
+        attributes: attributeList,
+      },
+      {
+        headers: authHeader(),
+      }
+    );
+  }
+  createAttributeDef(attributeName: string, attributeType: string) {
+    return instance.post(
+      "/submit?function=META_addAttributeDefinition",
+      {
+        attribute: attributeName,
+        attrValue: attributeType,
+      },
+      {
+        headers: authHeader(),
+      }
+    );
+  }
 }
 
 export default new MetaInfoService();

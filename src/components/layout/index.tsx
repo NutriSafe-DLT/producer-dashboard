@@ -160,19 +160,18 @@ export default function MainLayout(props) {
         <Divider />
         <List>
           <ListItem>
-            <ListItemText primary="Metainformationen" />
+            <ListItemText primary="Meta information" />
           </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <ComputerIcon />
-            </ListItemIcon>
-            <ListItemText primary="Anzeigen" />
-          </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => {
+              router.push("/meta-info", undefined, { shallow: false });
+            }}
+          >
             <ListItemIcon>
               <CreateIcon />
             </ListItemIcon>
-            <ListItemText primary="Verwalten" />
+            <ListItemText primary="Manage" />
           </ListItem>
         </List>
       </Drawer>
