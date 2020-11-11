@@ -62,6 +62,12 @@ const Dashboard = () => {
           </Card>
         </Grid>
       </Grid>
+      <iframe
+        width="1140"
+        height="541.25"
+        src="https://app.powerbi.com/reportEmbed?reportId=99220c97-8327-4561-b385-ba606e22d2db&autoAuth=true&ctid=2d219629-d97e-4adb-8072-3b982a4a49b5&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLWdlcm1hbnktd2VzdC1jZW50cmFsLXByaW1hcnktcmVkaXJlY3QuYW5hbHlzaXMud2luZG93cy5uZXQvIn0%3D"
+        allowFullScreen
+      ></iframe>
     </div>
   );
 };
