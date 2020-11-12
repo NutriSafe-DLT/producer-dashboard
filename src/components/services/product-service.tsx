@@ -1,5 +1,6 @@
 import instance from "../../axios";
 import authHeader from "./auth-header";
+import Product from "../../model/product";
 
 class ProductService {
   private companyName: string = "SalersMSP"; // change to env variable at some point

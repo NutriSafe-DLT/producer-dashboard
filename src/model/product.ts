@@ -1,4 +1,4 @@
-interface Product extends DTO {
+export default interface Product extends DTO {
   id: string;
   pdc?: string;
   product: string;

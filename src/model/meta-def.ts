@@ -1,4 +1,4 @@
-interface metaDef {
+export default interface metaDef {
   productNameToAttributesMap: {};
   unitList: string[];
   attributeToDataTypeMap: {};

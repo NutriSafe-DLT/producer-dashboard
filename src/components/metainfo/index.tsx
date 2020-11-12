@@ -6,6 +6,7 @@ import { Button, Typography } from "@material-ui/core";
 import MetaAttributes from "./meta-attributes";
 import AddProductDefDialog from "./add-product-def-dialog";
 import AddAttributeDefDialog from "./add-attribute-def-dialog";
+import metaDef from "../../model/meta-def";
 
 const MetaInfo = () => {
   const [metaInfoState, setMetaInfoState] = React.useState<metaDef>();

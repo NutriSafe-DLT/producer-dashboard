@@ -10,12 +10,22 @@ import {
 } from "@material-ui/core";
 import DynamicProductInfo from "./dynamic-product-info";
 import { useEffect } from "react";
+import Product from "../../model/product";
 
 
 interface metaDef {
   productNameToAttributesMap: any;
   unitList: string[];
   attributeToDataTypeMap: any;
+}
+
+interface IBasicProductInfo {
+  amount?: number;
+  unit?: string;
+  product?: string;
+  id?: string;
+  pdc?: string;
+  property?: string;
 }
 
 const AddGoods = () => {
@@ -29,7 +39,7 @@ const AddGoods = () => {
 
   const [productSpecificJson, setProductSpecificJson] = React.useState({});
 
-  const [basicProductInfo, setBasicProductInfo] = React.useState({});
+  const [basicProductInfo, setBasicProductInfo] = React.useState<IBasicProductInfo>({});
 
   useEffect(() => {
     MetaInfoService.readMetaDef().then((res) => {
