@@ -11,6 +11,7 @@ import {
 import DynamicProductInfo from "./dynamic-product-info";
 import { useEffect } from "react";
 import Product from "../../model/product";
+import { map } from "highcharts";
 
 
 interface metaDef {
@@ -40,6 +41,8 @@ const AddGoods = () => {
   const [productSpecificJson, setProductSpecificJson] = React.useState({});
 
   const [basicProductInfo, setBasicProductInfo] = React.useState<IBasicProductInfo>({});
+
+  const [formSubmitted, setFormSubmitted] = React.useState(false);
 
   useEffect(() => {
     MetaInfoService.readMetaDef().then((res) => {
@@ -102,13 +105,16 @@ const AddGoods = () => {
     }
     console.log(result);
     clearValues();
-    // ProductService.createProduct(result)
-    //   .then((res) =>{
-    //     // reset form + success message
-    //   })
-    //   .catch((err) => {
-    //     // show error message
-    //   });
+    setFormSubmitted(true);
+    ProductService.createProduct(result)
+       .then((res) =>{
+         // reset form + success message
+         setFormSubmitted(false);
+       })
+       .catch((err) => {
+         // show error message
+         setFormSubmitted(false);
+       });
   }
 
   function clearValues() {
@@ -141,7 +147,7 @@ const AddGoods = () => {
             values={productSpecificJson}
           />
         </form>
-        <Button variant="contained" color="primary" onClick={submit} style={{marginTop: "3em"}}>
+        <Button variant="contained" color="primary" disabled={formSubmitted} onClick={submit} style={{marginTop: "3em"}}>
           Anlegen
         </Button>
       </Container>
