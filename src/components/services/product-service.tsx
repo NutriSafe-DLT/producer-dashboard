@@ -3,7 +3,7 @@ import authHeader from "./auth-header";
 import Product from "../../model/product";
 
 class ProductService {
-  private companyName: string = "SalersMSP"; // change to env variable at some point
+  private companyName: string = "DeoniMSP"; // change to env variable at some point
 
   createProduct(product: Product) {
     return instance.post("/submit?function=createObject", product, {
@@ -13,7 +13,7 @@ class ProductService {
 
   productsInbox() {
     return instance.post(
-      "/select",
+      "/select?function=selectChaincode",
       {
         selector: {
           receiver: this.companyName,
@@ -27,7 +27,7 @@ class ProductService {
 
   productsOutbox() {
     return instance.post(
-      "/select",
+      "/select?function=selectChaincode",
       {
         selector: {
           actualOwner: this.companyName,
@@ -44,7 +44,7 @@ class ProductService {
 
   productStock() {
     return instance.post(
-      "/select",
+      "/select?function=selectChaincode",
       {
         selector: {
           actualOwner: this.companyName,
