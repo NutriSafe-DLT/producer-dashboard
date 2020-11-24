@@ -16,7 +16,13 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { Clear, KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
+import {
+  Clear,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  ReportProblem,
+} from "@material-ui/icons";
+import AlarmProduct from "./alarm-for-product-dialog";
 
 interface StockItem {
   alarmFlag: boolean;
@@ -30,10 +36,15 @@ interface StockItem {
 function Row(props: { row: StockItem }) {
   const { row } = props;
   const [open, setOpen] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
 
   return (
     <React.Fragment>
-      <TableRow>
+      <TableRow
+        style={{
+          backgroundColor: row.alarmFlag ? "lightpink" : undefined,
+        }}
+      >
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -46,6 +57,15 @@ function Row(props: { row: StockItem }) {
         <TableCell>{row.productName}</TableCell>
         <TableCell>{row.amount}</TableCell>
         <TableCell>{row.unit}</TableCell>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpenAlert(true)}
+          >
+            <ReportProblem />
+          </IconButton>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -64,6 +84,12 @@ function Row(props: { row: StockItem }) {
           </Collapse>
         </TableCell>
       </TableRow>
+      <AlarmProduct
+        handleClose={() => setOpenAlert(false)}
+        handleSubmit={productService.activateAlarmForProduct}
+        open={openAlert}
+        productId={row.key}
+      />
     </React.Fragment>
   );
 }

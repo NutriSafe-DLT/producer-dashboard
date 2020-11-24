@@ -25,7 +25,7 @@ const ProductInbox = () => {
 
   useEffect(() => {
     productService.productsInbox().then((res) => {
-      setProductState([JSON.parse(res.data)]);
+      if (res.data.length > 0) setProductState([JSON.parse(res.data)]);
     });
     return () => setProductState([]);
   }, []);
@@ -46,7 +46,9 @@ const ProductInbox = () => {
             productState.map((product: InboxItem) => (
               <TableRow
                 key={product.key}
-                className={product.alarmFlag ? "background-color: red" : null}
+                style={{
+                  backgroundColor: product.alarmFlag ? "red" : undefined,
+                }}
               >
                 <TableCell>{product.productName}</TableCell>
                 <TableCell>{product.amount}</TableCell>

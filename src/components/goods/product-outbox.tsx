@@ -46,7 +46,9 @@ const ProductOutbox = () => {
             productState.map((product: OutboxItem) => (
               <TableRow
                 key={product.key}
-                className={product.alarmFlag ? "background-color: red" : null}
+                style={{
+                  backgroundColor: product.alarmFlag ? "red" : undefined,
+                }}
               >
                 <TableCell>{product.productName}</TableCell>
                 <TableCell>{product.amount}</TableCell>
