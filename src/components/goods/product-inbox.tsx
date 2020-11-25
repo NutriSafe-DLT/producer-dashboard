@@ -1,5 +1,5 @@
 import { Button, IconButton } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import productService from "../services/product-service";
 import {
   Table,
@@ -10,6 +10,8 @@ import {
   TableRow,
 } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
+import ConfirmDialog from "./confirmation-dialog";
+import { AxiosResponse } from "axios";
 
 interface InboxItem {
   actualOwner: string;
@@ -22,13 +24,23 @@ interface InboxItem {
 
 const ProductInbox = () => {
   const [productState, setProductState] = useState<InboxItem[]>([]);
+  const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
 
   useEffect(() => {
     productService.productsInbox().then((res) => {
       if (res.data.length > 0) setProductState([JSON.parse(res.data)]);
     });
     return () => setProductState([]);
-  }, []);
+  });
+
+  function handleAcceptProduct(id: string): Promise<AxiosResponse<any>> {
+    const promise = productService.acceptProductFromInbox(id);
+    promise.then(() => {
+      const filteredList = productState.filter((item) => item.key != id);
+      setProductState(filteredList);
+    });
+    return promise;
+  }
 
   return (
     <TableContainer>
@@ -57,11 +69,7 @@ const ProductInbox = () => {
                 <TableCell>
                   <IconButton
                     color="primary"
-                    onClick={() =>
-                      console.log(
-                        "Implement behavior for productService.acceptProductFromInbox(product.key).then()"
-                      )
-                    }
+                    onClick={() => setAcceptDialogOpen(true)}
                   >
                     <Check />
                   </IconButton>
@@ -71,6 +79,13 @@ const ProductInbox = () => {
                     <Clear />
                   </IconButton>
                 </TableCell>
+                <ConfirmDialog
+                  title="Are your sure you want to accept for this product?"
+                  handleClose={() => setAcceptDialogOpen(false)}
+                  handleSubmit={handleAcceptProduct}
+                  open={acceptDialogOpen}
+                  productId={product.key}
+                />
               </TableRow>
             ))
           ) : (

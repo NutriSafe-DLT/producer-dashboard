@@ -23,6 +23,7 @@ import {
   ReportProblem,
 } from "@material-ui/icons";
 import ConfirmDialog from "./confirmation-dialog";
+import { AxiosResponse } from "axios";
 
 interface StockItem {
   alarmFlag: boolean;
@@ -33,11 +34,20 @@ interface StockItem {
   attributes: any;
 }
 
-function Row(props: { row: StockItem }) {
+function Row(props: {
+  row: StockItem;
+  handleProductDeletion: (id: string) => Promise<AxiosResponse<any>>;
+}) {
   const { row } = props;
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [openDeleteion, setOpenDeleteion] = useState(false);
+
+  function handleSetAlert(id: string): Promise<AxiosResponse<any>> {
+    const promise = productService.activateAlarmForProduct(id);
+    promise.then((res) => (row.alarmFlag = true));
+    return promise;
+  }
 
   return (
     <React.Fragment>
@@ -55,6 +65,7 @@ function Row(props: { row: StockItem }) {
             {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
+        <TableCell>{row.key}</TableCell>
         <TableCell>{row.productName}</TableCell>
         <TableCell>{row.amount}</TableCell>
         <TableCell>{row.unit}</TableCell>
@@ -101,14 +112,14 @@ function Row(props: { row: StockItem }) {
       <ConfirmDialog
         title="Are your sure you want to delete this product?"
         handleClose={() => setOpenDeleteion(false)}
-        handleSubmit={productService.deleteProduct}
+        handleSubmit={props.handleProductDeletion}
         open={openDeleteion}
         productId={row.key}
       />
       <ConfirmDialog
         title="Are your sure you want to start an alarm for this product?"
         handleClose={() => setOpenAlert(false)}
-        handleSubmit={productService.activateAlarmForProduct}
+        handleSubmit={handleSetAlert}
         open={openAlert}
         productId={row.key}
       />
@@ -130,12 +141,24 @@ const ProductStock = () => {
     return () => setProductState([]);
   }, []);
 
+  function handleProductDeletion(id): Promise<AxiosResponse<any>> {
+    const promise = productService.deleteProduct(id);
+    promise.then((res) => {
+      const filteredList: StockItem[] = productState.filter(
+        (item) => id != item.key
+      );
+      setProductState(filteredList);
+    });
+    return promise;
+  }
+
   return (
     <TableContainer>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell />
+            <TableCell>Key</TableCell>
             <TableCell>Product</TableCell>
             <TableCell>Amount</TableCell>
             <TableCell>Unit</TableCell>
@@ -144,7 +167,11 @@ const ProductStock = () => {
         <tbody>
           {productState.length != 0 ? (
             productState.map((product: StockItem) => (
-              <Row key={product.key} row={product} />
+              <Row
+                key={product.key}
+                row={product}
+                handleProductDeletion={handleProductDeletion}
+              />
             ))
           ) : (
             <tr></tr>

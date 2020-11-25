@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import { ArrowBack, Delete, ReportProblem } from "@material-ui/icons";
 import ConfirmDialog from "./confirmation-dialog";
+import { AxiosResponse } from "axios";
 
 interface OutboxItem {
   receiver: string;
@@ -32,6 +33,34 @@ const ProductOutbox = () => {
     });
     return () => setProductState([]);
   }, []);
+
+  function handleWithdraw(id: string): Promise<AxiosResponse<any>> {
+    const promise = productService.withdrawProductFromOutbox(id);
+    promise.then(() => {
+      const filtered = productState.filter((item) => item.key != id);
+      setProductState(filtered);
+    });
+    return promise;
+  }
+  function handleDeletion(id: string): Promise<AxiosResponse<any>> {
+    const promise = productService.deleteProduct(id);
+    promise.then(() => {
+      const filtered = productState.filter((item) => item.key != id);
+      setProductState(filtered);
+    });
+    return promise;
+  }
+  function handleAlert(id: string): Promise<AxiosResponse<any>> {
+    const promise = productService.activateAlarmForProduct(id);
+    promise.then(() => {
+      const filtered = [].concat(productState);
+      filtered.forEach((item) => {
+        if (item.key === id) item.alarmFlag = true;
+      });
+      setProductState(filtered);
+    });
+    return promise;
+  }
 
   return (
     <TableContainer>
@@ -87,21 +116,21 @@ const ProductOutbox = () => {
                 <ConfirmDialog
                   title="Are your sure you want to delete this product?"
                   handleClose={() => setOpenDeleteion(false)}
-                  handleSubmit={productService.deleteProduct}
+                  handleSubmit={handleDeletion}
                   open={openDeleteion}
                   productId={product.key}
                 />
                 <ConfirmDialog
                   title="Are your sure you want to start an alarm for this product?"
                   handleClose={() => setOpenAlert(false)}
-                  handleSubmit={productService.activateAlarmForProduct}
+                  handleSubmit={handleAlert}
                   open={openAlert}
                   productId={product.key}
                 />
                 <ConfirmDialog
                   title="Are your sure you want to move this product back to the stock?"
                   handleClose={() => setWithdrawOpen(false)}
-                  handleSubmit={productService.withdrawProductFromOutbox}
+                  handleSubmit={handleWithdraw}
                   open={withdrawOpen}
                   productId={product.key}
                 />
