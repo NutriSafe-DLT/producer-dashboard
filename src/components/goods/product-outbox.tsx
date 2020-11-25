@@ -29,7 +29,7 @@ const ProductOutbox = () => {
 
   useEffect(() => {
     productService.productsOutbox().then((res) => {
-      setProductState([JSON.parse(res.data)]);
+      if (res.data.length > 0) setProductState([JSON.parse(res.data)]);
     });
     return () => setProductState([]);
   }, []);
@@ -79,7 +79,7 @@ const ProductOutbox = () => {
               <TableRow
                 key={product.key}
                 style={{
-                  backgroundColor: product.alarmFlag ? "red" : undefined,
+                  backgroundColor: product.alarmFlag ? "lightpink" : undefined,
                 }}
               >
                 <TableCell>{product.productName}</TableCell>

@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@material-ui/core";
 import {
+  ArrowForward,
   Delete,
   KeyboardArrowDown,
   KeyboardArrowUp,
@@ -24,6 +25,7 @@ import {
 } from "@material-ui/icons";
 import ConfirmDialog from "./confirmation-dialog";
 import { AxiosResponse } from "axios";
+import SetReceiverDialog from "./set-receiver-dialog";
 
 interface StockItem {
   alarmFlag: boolean;
@@ -37,11 +39,13 @@ interface StockItem {
 function Row(props: {
   row: StockItem;
   handleProductDeletion: (id: string) => Promise<AxiosResponse<any>>;
+  handleSetReceiver: (id: string) => Promise<AxiosResponse<any>>;
 }) {
   const { row } = props;
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [openDeleteion, setOpenDeleteion] = useState(false);
+  const [openSetReceiver, setOpenSetReceiver] = useState(false);
 
   function handleSetAlert(id: string): Promise<AxiosResponse<any>> {
     const promise = productService.activateAlarmForProduct(id);
@@ -69,15 +73,19 @@ function Row(props: {
         <TableCell>{row.productName}</TableCell>
         <TableCell>{row.amount}</TableCell>
         <TableCell>{row.unit}</TableCell>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpenAlert(true)}
-          >
-            <ReportProblem />
-          </IconButton>
-        </TableCell>
+        {row.alarmFlag ? (
+          <div />
+        ) : (
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpenAlert(true)}
+            >
+              <ReportProblem />
+            </IconButton>
+          </TableCell>
+        )}
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -85,6 +93,15 @@ function Row(props: {
             onClick={() => setOpenDeleteion(true)}
           >
             <Delete />
+          </IconButton>
+        </TableCell>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpenSetReceiver(true)}
+          >
+            <ArrowForward />
           </IconButton>
         </TableCell>
       </TableRow>
@@ -123,6 +140,12 @@ function Row(props: {
         open={openAlert}
         productId={row.key}
       />
+      <SetReceiverDialog
+        handleClose={() => setOpenSetReceiver(false)}
+        handleSubmit={props.handleSetReceiver}
+        open={openSetReceiver}
+        productId={row.key}
+      />
     </React.Fragment>
   );
 }
@@ -152,6 +175,20 @@ const ProductStock = () => {
     return promise;
   }
 
+  function handleSetReceiver(
+    id: string,
+    receiver: string
+  ): Promise<AxiosResponse<any>> {
+    const promise = productService.sendProductToOutboxForReceiver(id, receiver);
+    promise.then((res) => {
+      const filteredList: StockItem[] = productState.filter(
+        (item) => id != item.key
+      );
+      setProductState(filteredList);
+    });
+    return promise;
+  }
+
   return (
     <TableContainer>
       <Table aria-label="simple table">
@@ -171,6 +208,7 @@ const ProductStock = () => {
                 key={product.key}
                 row={product}
                 handleProductDeletion={handleProductDeletion}
+                handleSetReceiver={handleSetReceiver}
               />
             ))
           ) : (

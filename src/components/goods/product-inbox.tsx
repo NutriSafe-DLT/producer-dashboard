@@ -31,7 +31,7 @@ const ProductInbox = () => {
       if (res.data.length > 0) setProductState([JSON.parse(res.data)]);
     });
     return () => setProductState([]);
-  });
+  }, []);
 
   function handleAcceptProduct(id: string): Promise<AxiosResponse<any>> {
     const promise = productService.acceptProductFromInbox(id);
@@ -59,7 +59,7 @@ const ProductInbox = () => {
               <TableRow
                 key={product.key}
                 style={{
-                  backgroundColor: product.alarmFlag ? "red" : undefined,
+                  backgroundColor: product.alarmFlag ? "lightpink" : undefined,
                 }}
               >
                 <TableCell>{product.productName}</TableCell>
