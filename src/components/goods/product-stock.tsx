@@ -17,12 +17,12 @@ import {
   TableRow,
 } from "@material-ui/core";
 import {
-  Clear,
+  Delete,
   KeyboardArrowDown,
   KeyboardArrowUp,
   ReportProblem,
 } from "@material-ui/icons";
-import AlarmProduct from "./alarm-for-product-dialog";
+import ConfirmDialog from "./confirmation-dialog";
 
 interface StockItem {
   alarmFlag: boolean;
@@ -37,6 +37,7 @@ function Row(props: { row: StockItem }) {
   const { row } = props;
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
+  const [openDeleteion, setOpenDeleteion] = useState(false);
 
   return (
     <React.Fragment>
@@ -66,8 +67,21 @@ function Row(props: { row: StockItem }) {
             <ReportProblem />
           </IconButton>
         </TableCell>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpenDeleteion(true)}
+          >
+            <Delete />
+          </IconButton>
+        </TableCell>
       </TableRow>
-      <TableRow>
+      <TableRow
+        style={{
+          backgroundColor: row.alarmFlag ? "lightpink" : undefined,
+        }}
+      >
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box margin={1}>
@@ -84,7 +98,15 @@ function Row(props: { row: StockItem }) {
           </Collapse>
         </TableCell>
       </TableRow>
-      <AlarmProduct
+      <ConfirmDialog
+        title="Are your sure you want to delete this product?"
+        handleClose={() => setOpenDeleteion(false)}
+        handleSubmit={productService.deleteProduct}
+        open={openDeleteion}
+        productId={row.key}
+      />
+      <ConfirmDialog
+        title="Are your sure you want to start an alarm for this product?"
         handleClose={() => setOpenAlert(false)}
         handleSubmit={productService.activateAlarmForProduct}
         open={openAlert}

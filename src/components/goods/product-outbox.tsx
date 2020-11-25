@@ -1,15 +1,15 @@
-import { Button, IconButton } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { IconButton } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import productService from "../services/product-service";
 import {
   Table,
-  TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { Check, Clear } from "@material-ui/icons";
+import { ArrowBack, Delete, ReportProblem } from "@material-ui/icons";
+import ConfirmDialog from "./confirmation-dialog";
 
 interface OutboxItem {
   receiver: string;
@@ -22,6 +22,9 @@ interface OutboxItem {
 
 const ProductOutbox = () => {
   const [productState, setProductState] = useState<OutboxItem[]>([]);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [openDeleteion, setOpenDeleteion] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
 
   useEffect(() => {
     productService.productsOutbox().then((res) => {
@@ -55,10 +58,53 @@ const ProductOutbox = () => {
                 <TableCell>{product.unit}</TableCell>
                 <TableCell>{product.receiver}</TableCell>
                 <TableCell>
-                  <IconButton color="secondary">
-                    <Clear />
+                  <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setWithdrawOpen(true)}
+                  >
+                    <ArrowBack />
                   </IconButton>
                 </TableCell>
+                <TableCell>
+                  <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setOpenAlert(true)}
+                  >
+                    <ReportProblem />
+                  </IconButton>
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setOpenDeleteion(true)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </TableCell>
+                <ConfirmDialog
+                  title="Are your sure you want to delete this product?"
+                  handleClose={() => setOpenDeleteion(false)}
+                  handleSubmit={productService.deleteProduct}
+                  open={openDeleteion}
+                  productId={product.key}
+                />
+                <ConfirmDialog
+                  title="Are your sure you want to start an alarm for this product?"
+                  handleClose={() => setOpenAlert(false)}
+                  handleSubmit={productService.activateAlarmForProduct}
+                  open={openAlert}
+                  productId={product.key}
+                />
+                <ConfirmDialog
+                  title="Are your sure you want to move this product back to the stock?"
+                  handleClose={() => setWithdrawOpen(false)}
+                  handleSubmit={productService.withdrawProductFromOutbox}
+                  open={withdrawOpen}
+                  productId={product.key}
+                />
               </TableRow>
             ))
           ) : (

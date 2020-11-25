@@ -4,35 +4,33 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
-  Typography,
 } from "@material-ui/core";
 import React from "react";
 
-export interface AlarmProductProps {
+export interface ConfirmDialogProps {
   open: boolean;
+  title: string;
   handleClose: Function;
   handleSubmit: Function;
   productId: String;
 }
 
-const AlarmProduct = ({
+const ConfirmDialog = ({
   open,
+  title,
   handleClose,
   handleSubmit,
   productId,
-}: AlarmProductProps) => {
+}: ConfirmDialogProps) => {
   return (
     <Dialog
       open={open}
       onClose={() => handleClose()}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+      <DialogTitle id="form-dialog-title">Confirm Deletion</DialogTitle>
       <DialogContent>
-        <Typography variant="h2">
-          Are your sure you want to start an alarm for this product?
-        </Typography>
+        <DialogTitle>{title}</DialogTitle>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose()} color="primary">
@@ -40,17 +38,18 @@ const AlarmProduct = ({
         </Button>
         <Button
           color="primary"
+          variant="contained"
           onClick={(e) =>
             handleSubmit(productId)
               .then(() => handleClose())
               .catch(() => alert("Something went wrong"))
           }
         >
-          Alert
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AlarmProduct;
+export default ConfirmDialog;

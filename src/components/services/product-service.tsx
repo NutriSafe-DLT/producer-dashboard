@@ -71,7 +71,7 @@ class ProductService {
 
   sendProductToOutboxForReceiver(id: string, receiver: string) {
     return instance.post(
-      "/submit?function=changeOwner",
+      "/submit?function=setReceiver",
       { id, receiver },
       {
         headers: authHeader(),
@@ -79,9 +79,23 @@ class ProductService {
     );
   }
 
+  withdrawProductFromOutbox(id: string) {
+    return this.sendProductToOutboxForReceiver(id, "");
+  }
+
   activateAlarmForProduct(id: string) {
     return instance.post(
       "/submit?function=activateAlarm",
+      { id },
+      {
+        headers: authHeader(),
+      }
+    );
+  }
+
+  deleteProduct(id: string) {
+    return instance.post(
+      "/submit?function=deleteObject",
       { id },
       {
         headers: authHeader(),
