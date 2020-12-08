@@ -9,18 +9,16 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { Check, Clear, Delete } from "@material-ui/icons";
+import { Check, Clear, Delete, Info } from "@material-ui/icons";
 import { AxiosResponse } from "axios";
 import userManagementService from "../services/user-management-service";
 import ConfirmDialog from "../goods/confirmation-dialog";
-
-interface UsersResponse {
-  usernames: string[];
-}
+import { useRouter } from "next/router";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     userManagementService.getAllUsers().then((res) => {
@@ -45,6 +43,7 @@ const UserList = () => {
           <TableRow>
             <TableCell>Username</TableCell>
             <TableCell>Delete</TableCell>
+            <TableCell>Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -57,6 +56,18 @@ const UserList = () => {
                   onClick={() => setDeleteDialogOpen(true)}
                 >
                   <Delete />
+                </IconButton>
+              </TableCell>
+              <TableCell>
+                <IconButton
+                  color="primary"
+                  onClick={() =>
+                    router.push("/users/" + username, undefined, {
+                      shallow: false,
+                    })
+                  }
+                >
+                  <Info />
                 </IconButton>
               </TableCell>
               <ConfirmDialog
