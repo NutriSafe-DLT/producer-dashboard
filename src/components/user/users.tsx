@@ -75,7 +75,7 @@ const UserList = () => {
                 handleClose={() => setDeleteDialogOpen(false)}
                 handleSubmit={handleDeleteUser}
                 open={deleteDialogOpen}
-                productId={username}
+                param={username}
               />
             </TableRow>
           ))}

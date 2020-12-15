@@ -118,21 +118,21 @@ const ProductOutbox = () => {
                   handleClose={() => setOpenDeleteion(false)}
                   handleSubmit={handleDeletion}
                   open={openDeleteion}
-                  productId={product.key}
+                  param={product.key}
                 />
                 <ConfirmDialog
                   title="Are your sure you want to start an alarm for this product?"
                   handleClose={() => setOpenAlert(false)}
                   handleSubmit={handleAlert}
                   open={openAlert}
-                  productId={product.key}
+                  param={product.key}
                 />
                 <ConfirmDialog
                   title="Are your sure you want to move this product back to the stock?"
                   handleClose={() => setWithdrawOpen(false)}
                   handleSubmit={handleWithdraw}
                   open={withdrawOpen}
-                  productId={product.key}
+                  param={product.key}
                 />
               </TableRow>
             ))

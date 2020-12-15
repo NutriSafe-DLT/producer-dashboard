@@ -84,7 +84,7 @@ const ProductInbox = () => {
                   handleClose={() => setAcceptDialogOpen(false)}
                   handleSubmit={handleAcceptProduct}
                   open={acceptDialogOpen}
-                  productId={product.key}
+                  param={product.key}
                 />
               </TableRow>
             ))

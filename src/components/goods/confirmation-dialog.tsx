@@ -14,8 +14,8 @@ export interface ConfirmDialogProps {
   open: boolean;
   title: string;
   handleClose: Function;
-  handleSubmit: (id: string) => Promise<AxiosResponse>;
-  productId: string;
+  handleSubmit: (any) => Promise<AxiosResponse>;
+  param: any;
 }
 
 const ConfirmDialog = ({
@@ -23,7 +23,7 @@ const ConfirmDialog = ({
   title,
   handleClose,
   handleSubmit,
-  productId,
+  param,
 }: ConfirmDialogProps) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -52,7 +52,7 @@ const ConfirmDialog = ({
           color="primary"
           variant="outlined"
           onClick={(e) => {
-            handleSubmit(productId)
+            handleSubmit(param)
               .catch(() => setError(true))
               .then(() => setError(false))
               .finally(() => setLoading(false));

@@ -134,14 +134,14 @@ function Row(props: {
         handleClose={() => setOpenDeleteion(false)}
         handleSubmit={props.handleProductDeletion}
         open={openDeleteion}
-        productId={row.key}
+        param={row.key}
       />
       <ConfirmDialog
         title="Are your sure you want to start an alarm for this product?"
         handleClose={() => setOpenAlert(false)}
         handleSubmit={handleSetAlert}
         open={openAlert}
-        productId={row.key}
+        param={row.key}
       />
       <SetReceiverDialog
         handleClose={() => setOpenSetReceiver(false)}
