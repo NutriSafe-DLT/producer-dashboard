@@ -142,25 +142,24 @@ export default function MainLayout(props) {
         <Divider />
         <List>
           <ListItem>
-            <ListItemText primary="Benutzer" />
+            <ListItemText primary="User" />
           </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <ComputerIcon />
-            </ListItemIcon>
-            <ListItemText primary="Anzeigen" />
-          </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => {
+              router.push("/users", undefined, { shallow: false });
+            }}
+          >
             <ListItemIcon>
               <CreateIcon />
             </ListItemIcon>
-            <ListItemText primary="Verwalten" />
+            <ListItemText primary="Manage" />
           </ListItem>
         </List>
         <Divider />
         <List>
           <ListItem>
-            <ListItemText primary="Meta information" />
+            <ListItemText primary="Meta Information" />
           </ListItem>
           <ListItem
             button
