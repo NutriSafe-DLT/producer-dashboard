@@ -24,7 +24,7 @@ class UserManagementService {
     );
   }
 
-  linkUserToWhitelist(whitelist: string, username: string) {
+  linkUserToWhitelist({ whitelist, username }) {
     return instance.post(
       "/submit?function=linkUserToWhitelist",
       { whitelist, username },

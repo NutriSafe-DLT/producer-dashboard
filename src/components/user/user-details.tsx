@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   CardContent,
   Divider,
@@ -16,9 +17,20 @@ import * as React from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ConfirmDialog from "../goods/confirmation-dialog";
 import userManagementService from "../services/user-management-service";
+import AddWhitelistToUser from "./add-whitelist-to-user-dialog";
 
 const UserDetailsCard = ({ userDetails }) => {
   const [removeWhitelistOpen, setRemoveWhitelistOpen] = React.useState(false);
+  const [addWhitelistDialogOpen, setAddWhitelistDialogOpen] = React.useState(
+    false
+  );
+  const [allWhiteLists, setAllWhitelists] = React.useState([]);
+
+  React.useEffect(() => {
+    userManagementService.getWhitelists().then((res) => {
+      setAllWhitelists(Object.keys(res.data));
+    });
+  }, []);
 
   return (
     <Card>
@@ -27,7 +39,22 @@ const UserDetailsCard = ({ userDetails }) => {
         <br />
         <Typography>Role: {userDetails.role}</Typography>
         <Divider />
-        <Typography variant="h6">Whitelists:</Typography>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h6">Whitelists:</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setAddWhitelistDialogOpen(true)}
+          >
+            Add Whitelist
+          </Button>
+        </div>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -69,6 +96,14 @@ const UserDetailsCard = ({ userDetails }) => {
           ))}
         </List>
       </CardContent>
+      <AddWhitelistToUser
+        open={addWhitelistDialogOpen}
+        handleClose={() => setAddWhitelistDialogOpen(false)}
+        handleSubmit={userManagementService.linkUserToWhitelist}
+        username={userDetails.username}
+        userWhitelists={userDetails.linkedToWhitelists}
+        allWhitelists={allWhiteLists}
+      />
     </Card>
   );
 };
