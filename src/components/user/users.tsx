@@ -1,6 +1,5 @@
-import { Button, IconButton } from "@material-ui/core";
+import { Button, IconButton, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import productService from "../services/product-service";
 import {
   Table,
   TableBody,
@@ -38,6 +37,24 @@ const UserList = () => {
 
   return (
     <TableContainer>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="h6">Users:</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() =>
+            router.push("/users/create", undefined, { shallow: false })
+          }
+        >
+          Create User
+        </Button>
+      </div>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
