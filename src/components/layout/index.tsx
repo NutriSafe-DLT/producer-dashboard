@@ -142,7 +142,7 @@ export default function MainLayout(props) {
         <Divider />
         <List>
           <ListItem>
-            <ListItemText primary="User" />
+            <ListItemText primary="Access Management" />
           </ListItem>
           <ListItem
             button
@@ -153,7 +153,18 @@ export default function MainLayout(props) {
             <ListItemIcon>
               <CreateIcon />
             </ListItemIcon>
-            <ListItemText primary="Manage" />
+            <ListItemText primary="Users" />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              router.push("/whitelists", undefined, { shallow: false });
+            }}
+          >
+            <ListItemIcon>
+              <CreateIcon />
+            </ListItemIcon>
+            <ListItemText primary="Whitelists" />
           </ListItem>
         </List>
         <Divider />
