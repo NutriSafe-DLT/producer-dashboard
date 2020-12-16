@@ -1,4 +1,5 @@
 import instance from "../../axios";
+import * as jwt from "jsonwebtoken";
 
 class AuthService {
   login(username, password) {
@@ -8,7 +9,6 @@ class AuthService {
         password,
       })
       .then((response) => {
-        console.log("Success service");
         if (response.data.token) {
           localStorage.setItem("JWT", response.data.token);
         }
@@ -20,7 +20,20 @@ class AuthService {
   }
 
   getCurrentUser() {
-    // Parse JWT
+    // const encodedJWT = localStorage.getItem("JWT");
+    // const decodedJWT = jwt.decode(encodedJWT, { complete: true });
+    // decodedJWT.payload.exp > Date.now();
+  }
+
+  isLoggedIn(): boolean {
+    // only execute on client side
+    if (typeof window === "object") {
+      const encodedJWT = localStorage.getItem("JWT");
+      if (!encodedJWT) return false;
+      const decodedJWT = jwt.decode(encodedJWT, { complete: true });
+      if (decodedJWT.payload.exp < Date.now() / 1000) return false;
+      return true;
+    }
   }
 }
 
