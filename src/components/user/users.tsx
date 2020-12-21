@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogUsername, setDeleteDialogUsername] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -24,16 +24,7 @@ const UserList = () => {
       setUsers(res.data.usernames);
     });
     return () => setUsers([]);
-  }, []);
-
-  function handleDeleteUser(username: string): Promise<AxiosResponse<any>> {
-    const promise = userManagementService.deleteUser(username);
-    promise.then(() => {
-      const filteredList = users.filter((user) => user != username);
-      setUsers(filteredList);
-    });
-    return promise;
-  }
+  }, [deleteDialogUsername]);
 
   return (
     <TableContainer>
@@ -70,7 +61,7 @@ const UserList = () => {
               <TableCell>
                 <IconButton
                   color="primary"
-                  onClick={() => setDeleteDialogOpen(true)}
+                  onClick={() => setDeleteDialogUsername(username)}
                 >
                   <Delete />
                 </IconButton>
@@ -87,17 +78,17 @@ const UserList = () => {
                   <Info />
                 </IconButton>
               </TableCell>
-              <ConfirmDialog
-                title={"Are your sure you want to delete " + username + "?"}
-                handleClose={() => setDeleteDialogOpen(false)}
-                handleSubmit={handleDeleteUser}
-                open={deleteDialogOpen}
-                param={username}
-              />
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <ConfirmDialog
+        title={"Are your sure you want to delete " + deleteDialogUsername + "?"}
+        handleClose={() => setDeleteDialogUsername("")}
+        handleSubmit={userManagementService.deleteUser}
+        open={deleteDialogUsername !== ""}
+        param={deleteDialogUsername}
+      />
     </TableContainer>
   );
 };

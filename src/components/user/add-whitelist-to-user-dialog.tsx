@@ -86,7 +86,10 @@ const AddWhitelistToUser = ({
           onClick={(e) => {
             handleSubmit({ whitelist: selectedWhitelist, username })
               .catch(() => setError(true))
-              .then(() => setError(false))
+              .then(() => {
+                setError(false);
+                handleClose();
+              })
               .finally(() => setLoading(false));
             setLoading(true);
           }}

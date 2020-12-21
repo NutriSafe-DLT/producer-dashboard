@@ -2,7 +2,7 @@ import * as React from "react";
 import { Container, Typography, TextField, Button } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import userManagementService from "../services/user-management-service";
-
+import { useRouter } from "next/router";
 interface CreateUserProps {
   otherUsernames: string[];
 }
@@ -14,6 +14,7 @@ export const CreateUser = ({ otherUsernames }: CreateUserProps) => {
     confirmPassword: "",
   });
   const [error, setError] = React.useState("");
+  const router = useRouter();
 
   const validateUsername = (username: string) => {
     if (otherUsernames.includes(username)) {
@@ -31,8 +32,12 @@ export const CreateUser = ({ otherUsernames }: CreateUserProps) => {
     }
   };
 
-  const validatePassword = () => {
-    // Password rules
+  const validatePassword = (password: string) => {
+    if (password.length < 8) {
+      setError("Passwords must be at least 8 characters long");
+    } else {
+      setError("");
+    }
   };
 
   const clearInputs = () => {
@@ -50,6 +55,7 @@ export const CreateUser = ({ otherUsernames }: CreateUserProps) => {
         .createUser(newUser.username, newUser.password)
         .then((res) => {
           clearInputs();
+          router.push("/users", undefined, { shallow: false });
         });
     }
   };
@@ -85,7 +91,10 @@ export const CreateUser = ({ otherUsernames }: CreateUserProps) => {
         type="password"
         id="password"
         value={newUser.password}
-        onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+        onChange={(e) => {
+          setNewUser({ ...newUser, password: e.target.value });
+          validatePassword(e.target.value);
+        }}
       />
       <TextField
         variant="outlined"

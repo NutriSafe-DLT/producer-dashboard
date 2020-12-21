@@ -64,7 +64,7 @@ const UserDetailsCard = ({ userDetails }) => {
           </TableHead>
           <TableBody>
             {userDetails.linkedToWhitelists.map((whitelist: string) => (
-              <TableRow>
+              <TableRow key={whitelist}>
                 <TableCell>{whitelist}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => setRemoveWhitelistOpen(true)}>
@@ -92,7 +92,7 @@ const UserDetailsCard = ({ userDetails }) => {
         <Typography variant="h6">Allowed Functions:</Typography>
         <List>
           {userDetails.allowedFunctions.map((func: string) => (
-            <ListItem>{func}</ListItem>
+            <ListItem key={func}>{func}</ListItem>
           ))}
         </List>
       </CardContent>
