@@ -5,34 +5,36 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
 } from "@material-ui/core";
 import { AxiosResponse } from "axios";
-import React, { useEffect } from "react";
+import React from "react";
 
 export interface AddFunctionToWhitelistProps {
   open: boolean;
   handleClose: Function;
-  handleSubmit: (any) => Promise<AxiosResponse>;
-  whitelist: string;
-  funcs: string[];
+  handleSubmit: (string) => Promise<AxiosResponse>;
+  whitelists: string[];
 }
 
 const AddFunctionToWhitelist = ({
   open,
   handleClose,
   handleSubmit,
-  whitelist,
-  funcs,
+  whitelists,
 }: AddFunctionToWhitelistProps) => {
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(false);
-  const [functionName, setFunctionName] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [whitelistName, setWhitelistName] = React.useState("");
+
+  const validateWhitelist = (whitelist: string) => {
+    if (whitelists.includes(whitelist)) {
+      setError("This whitelist is already in use! Choose a different one");
+    } else {
+      setError("");
+    }
+  };
 
   return (
     <Dialog
@@ -44,22 +46,22 @@ const AddFunctionToWhitelist = ({
       <DialogContent>
         {error ? (
           <Typography style={{ backgroundColor: "lightpink" }}>
-            Something went wrong
+            {error}
           </Typography>
         ) : (
           <div />
         )}
-        <Typography>
-          Type a function that you want to add to {whitelist}?
-        </Typography>
+        <Typography>What is the name of the new whitelist?</Typography>
         <TextField
           margin="dense"
           id="func"
-          label="Function"
+          label="Whitelist"
           fullWidth
-          onChange={(e) => setFunctionName(e.target.value + "")}
-          value={functionName}
-          defaultValue=""
+          onChange={(e) => {
+            validateWhitelist(e.target.value);
+            setWhitelistName(e.target.value + "");
+          }}
+          value={whitelistName}
         ></TextField>
       </DialogContent>
       <DialogActions>
@@ -70,10 +72,10 @@ const AddFunctionToWhitelist = ({
           color="primary"
           variant="outlined"
           onClick={(e) => {
-            handleSubmit({ whitelist, func: functionName })
-              .catch(() => setError(true))
+            handleSubmit(whitelistName)
+              .catch(() => setError("Something went wrong"))
               .then(() => {
-                setError(false);
+                setError("");
                 handleClose();
               })
               .finally(() => setLoading(false));

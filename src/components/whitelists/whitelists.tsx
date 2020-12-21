@@ -13,10 +13,12 @@ import { AxiosResponse } from "axios";
 import userManagementService from "../services/user-management-service";
 import ConfirmDialog from "../goods/confirmation-dialog";
 import { useRouter } from "next/router";
+import CreateWhitelistDialog from "./create-whitelist-dialog";
 
 const WhitelistList = () => {
   const [whitelists, setWhitelists] = useState<string[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState("");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -24,18 +26,7 @@ const WhitelistList = () => {
       setWhitelists(Object.keys(res.data));
     });
     return () => setWhitelists([]);
-  }, []);
-
-  function handleDeleteWhitelist(
-    whitelist: string
-  ): Promise<AxiosResponse<any>> {
-    const promise = userManagementService.deleteUser(whitelist);
-    promise.then(() => {
-      const filteredList = whitelists.filter((wl) => wl != whitelist);
-      setWhitelists(filteredList);
-    });
-    return promise;
-  }
+  }, [deleteDialogOpen, createDialogOpen]);
 
   return (
     <TableContainer>
@@ -50,12 +41,16 @@ const WhitelistList = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() =>
-            router.push("/whitelists/create", undefined, { shallow: false })
-          }
+          onClick={() => setCreateDialogOpen(true)}
         >
           Create Whitelist
         </Button>
+        <CreateWhitelistDialog
+          open={createDialogOpen}
+          handleClose={() => setCreateDialogOpen(false)}
+          handleSubmit={userManagementService.createWhitelist}
+          whitelists={whitelists}
+        />
       </div>
       <Table aria-label="simple table">
         <TableHead>
@@ -72,7 +67,7 @@ const WhitelistList = () => {
               <TableCell>
                 <IconButton
                   color="primary"
-                  onClick={() => setDeleteDialogOpen(true)}
+                  onClick={() => setDeleteDialogOpen(whitelist)}
                 >
                   <Delete />
                 </IconButton>
@@ -89,17 +84,17 @@ const WhitelistList = () => {
                   <Info />
                 </IconButton>
               </TableCell>
-              <ConfirmDialog
-                title={"Are your sure you want to delete " + whitelist + "?"}
-                handleClose={() => setDeleteDialogOpen(false)}
-                handleSubmit={handleDeleteWhitelist}
-                open={deleteDialogOpen}
-                param={whitelist}
-              />
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <ConfirmDialog
+        title={"Are your sure you want to delete this whitelist?"}
+        handleClose={() => setDeleteDialogOpen("")}
+        handleSubmit={userManagementService.deleteWhitelist}
+        open={deleteDialogOpen !== ""}
+        param={deleteDialogOpen}
+      />
     </TableContainer>
   );
 };

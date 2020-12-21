@@ -54,7 +54,10 @@ const ConfirmDialog = ({
           onClick={(e) => {
             handleSubmit(param)
               .catch(() => setError(true))
-              .then(() => setError(false))
+              .then(() => {
+                setError(false);
+                handleClose();
+              })
               .finally(() => setLoading(false));
             setLoading(true);
           }}
