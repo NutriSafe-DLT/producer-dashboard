@@ -14,4 +14,4 @@ EXPOSE 3000
 CMD [ "./start.sh" ]
 
 
-# docker run -p 3000:80 -e NEXT_PUBLIC_COMPANY_NAME=BrangusMSP -e NEXT_PUBLIC_API_URL=http://137.193.65.47:8080 -d --network <network-name> --hostname brangusdashboard --name brangus-dashboard nutrisafedlt/producerdashboard
+# docker run -p 80:3000 -e NEXT_PUBLIC_COMPANY_NAME=BrangusMSP -e NEXT_PUBLIC_API_URL=http://137.193.65.47:8080 -d --network <network-name> --hostname brangusdashboard --name brangus-dashboard nutrisafedlt/producerdashboard
