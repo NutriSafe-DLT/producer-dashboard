@@ -1,16 +1,17 @@
 FROM node:14
 
+WORKDIR /producer-dashboard
 # Install app dependencies
 COPY . .
+COPY ["package.json", "package-lock.json*", "./"]
+
 # RUN rm -rf node_modules
-RUN rm -rf .next
-RUN rm package-lock.json
-RUN apt-get update
-RUN apt-get install --assume-yes git 
-RUN apt-get upgrade --assume-yes
-RUN npm install --silent
+RUN rm -rf .next && rm package-lock.json
+RUN apt-get update && apt install git -y && git --version && npm install --silent
+RUN chmod u+x ./start.sh
 EXPOSE 3000
 
-CMD [ "npm", "run", "build-start" ]
+CMD [ "./start.sh" ]
 
-# run with docker run -p 80:3000 -e NEXT_PUBLIC_COMPANY_NAME=DeoniMSP -e NEXT_PUBLIC_API_URL=http://137.193.65.47:8080 <image-name>
+
+# docker run -p 3000:80 -e NEXT_PUBLIC_COMPANY_NAME=BrangusMSP -e NEXT_PUBLIC_API_URL=http://137.193.65.47:8080 -d --network <network-name> --hostname brangusdashboard --name brangus-dashboard nutrisafedlt/producerdashboard
