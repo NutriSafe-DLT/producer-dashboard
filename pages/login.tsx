@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
@@ -10,7 +11,6 @@ import Container from "@material-ui/core/Container";
 import AuthService from "../src/components/services/user-service";
 import { useRouter } from "next/router";
 import Alert from "@material-ui/lab/Alert";
-import { Hidden } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn() {
+  const [companyName, setCompany] = useState(process.env.NEXT_PUBLIC_COMPANY_NAME);
   const classes = useStyles();
   const router = useRouter();
   const [loginState, setLoginState] = useState({
@@ -57,7 +58,7 @@ export default function SignIn() {
           errorLogin: false,
           loginSuccess: true,
         });
-        router.push("/", undefined, { shallow: false });
+        router.push("/dashboard", undefined, { shallow: false });
       })
       .catch(() => {
         setLoginState({
@@ -77,9 +78,17 @@ export default function SignIn() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
+        <Grid item xs={12} sm container>
+          <Grid item xs container direction="column" spacing={2}>
+           <Typography component="h1" variant="h5">
+             Sign in to organisation : {companyName} 
+           </Typography>
+           <Typography variant="subtitle1">
+             Not the name you were expecting? Make sure you used the correct URL for your company. 
+           </Typography>
+          </Grid>
+        </Grid>
+        
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <TextField
             variant="outlined"
