@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHead,
@@ -14,8 +14,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     "& thead th": {
       fontWeight: "600",
-      color: theme.palette.primary.main,
-      backgroundColor: theme.palette.primary.light,
+      color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.main,
     },
     "& tbody td": {
       fontWeight: "300",
@@ -27,14 +27,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function useTable(records, headCells, filterFn) {
+export default function useTable<T>(
+  records: T[],
+  headCells: {
+    id: any;
+    label: string;
+    enableSorting?: boolean;
+  }[],
+  searchAttributes: string[]
+) {
   const classes = useStyles();
 
-  const pages = [5, 10, 25];
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(pages[page]);
-  const [order, setOrder] = useState<"desc" | "asc">();
+  const pages: number[] = [5, 10, 25];
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(pages[page]);
+  const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState();
+  const [filterFn, setFilterFn] = useState<{ fn: (input: T[]) => T[] }>({
+    fn: (items: T[]) => {
+      return items;
+    },
+  });
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  useEffect(() => {
+    setPage(0);
+    handleSearch(searchTerm);
+  }, [searchTerm]);
 
   const TblContainer = (props) => (
     <Table className={classes.table}>{props.children}</Table>
@@ -55,9 +74,7 @@ export default function useTable(records, headCells, filterFn) {
               key={headCell.id}
               sortDirection={orderBy === headCell.id ? order : false}
             >
-              {headCell.disableSorting ? (
-                headCell.label
-              ) : (
+              {headCell.enableSorting ? (
                 <TableSortLabel
                   active={orderBy === headCell.id}
                   direction={orderBy === headCell.id ? order : "asc"}
@@ -67,12 +84,38 @@ export default function useTable(records, headCells, filterFn) {
                 >
                   {headCell.label}
                 </TableSortLabel>
+              ) : (
+                headCell.label
               )}
             </TableCell>
           ))}
         </TableRow>
       </TableHead>
     );
+  };
+
+  const handleSearch = (search: string) => {
+    setFilterFn({
+      fn: (items) => {
+        if (search == "") return items;
+        else {
+          return items.filter((x) => {
+            for (const [key, value] of Object.entries(x)) {
+              if (
+                searchAttributes.includes(key) &&
+                value
+                  .toString()
+                  .toLocaleLowerCase()
+                  .includes(search.toLocaleLowerCase())
+              ) {
+                return true;
+              }
+            }
+            return false;
+          });
+        }
+      },
+    });
   };
 
   const handleChangePage = (event, newPage) => {
@@ -122,7 +165,7 @@ export default function useTable(records, headCells, filterFn) {
     return 0;
   }
 
-  const recordsAfterPagingAndSorting = () => {
+  const recordsAfterPagingAndSortingAndSearching = () => {
     return stableSort(
       filterFn.fn(records),
       getComparator(order, orderBy)
@@ -130,9 +173,11 @@ export default function useTable(records, headCells, filterFn) {
   };
 
   return {
+    searchTerm,
+    setSearchTerm,
     TblContainer,
     TblHead,
     TblPagination,
-    recordsAfterPagingAndSorting,
+    recordsAfterPagingAndSortingAndSearching,
   };
 }
