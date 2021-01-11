@@ -8,10 +8,14 @@ import requests
 import os
 import time
 import getpass
+import unicodedata
+from consolemenu import *
+from consolemenu.items import *
 
 currentToken = 'NONE'
-ORGANIZATIONS_LIST = ["BrangusMSP","PinzgauerMSP"]
+ORGANIZATIONS_LIST = ["DeoniMSP","BrangusMSP","PinzgauerMSP","AuthorityMSP","DurocMSP"]
 apiPassword = ''
+
 
 def save_object(obj, filename):
     with open(filename, 'wb') as output:  # Overwrites any existing file.
@@ -22,10 +26,43 @@ def init_demo_datastructures():
     init_demo_attributes()
     init_demo_units()
     init_demo_objects()
+    
+def generate_random_objects():
     milkObjects = generate_demo_objects( 'milk', 'milklot_product_template.json' )
-    cheeseObjects = generate_demo_objects( 'cheese', 'cheese_product_template.json' )
-     
+    cheeseObjects = generate_demo_objects( 'cheese', 'cheese_product_template.json' )   
     generate_object_links_produces( milkObjects, cheeseObjects )
+
+def generate_scenario(fileName):
+    scenarioFile = open (fileName, 'r' )
+    scenario = json.loads( scenarioFile.read() )
+    folderName = scenario["scenarioName"]
+    for str in scenario["productsInOrder"]:
+        print(str)
+    
+    for productName in scenario["productsInOrder"]:
+        product_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'scenario', folderName, 'products',productName)
+        productFiles = [f for f in os.listdir('./scenario/' + folderName + '/' + 'products' + '/' + productName )]
+        print(productFiles)
+        for prodFileName in productFiles:
+            createObjectFromJSONFile ( unicodedata.normalize('NFC',prodFileName) )
+    relations_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'scenario', folderName, 'relations')
+    relationFiles = [f for f in os.listdir(relations_dir) if os.path.isfile(f)]
+    print(relationFiles)
+    for relFileName in relationFiles:
+        createRelationFromJSONFile( relFileName )
+    scenarioFile.close()
+
+def createObjectFromJSONFile (objFileName):
+    objectFile = open (objFileName, 'r')
+    payload = json.loads( objectFile.read() )
+    api_postasadmin_with_method( 'createObject', json.dumps(payload) )
+    objectFile.close()
+
+def createRelationFromJSONFile (relFileName):
+    relationFile = open (relFileName, 'r')
+    payload = json.loads( relationFile.read() )
+    api_postasadmin_with_method( 'addPredecessor', json.dumps(payload) )
+    relationFile.close()
 
 def read_api_password():
     global apiPassword
@@ -179,8 +216,17 @@ def get_auth_token():
         print(r.status_code)
         return False
    
+menu = ConsoleMenu("Demo data generator for NutriSafe V0.2", "Please select type of generation")
 
-init_demo_datastructures()
+initialization_item = FunctionItem("Initialize data model", init_demo_datastructures)
+scenario_based_item = FunctionItem("Scenario-based: Soft Cheese", generate_scenario, ["scenarioCheese.json"])
+random_based_item = FunctionItem("Random generation of objects", generate_random_objects)
+menu.append_item(initialization_item)
+menu.append_item(scenario_based_item)
+menu.append_item(random_based_item)
+#init_demo_datastructures()
+##menu.show()
+generate_scenario("scenarioCheese.json")
 
 
 
