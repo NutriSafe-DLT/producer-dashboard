@@ -1,8 +1,7 @@
 import axios from "axios";
-import { Router } from "next/router";
 
 const instance = axios.create({
-  baseURL: "http://137.193.65.47:8080",
+  baseURL: process.env.NEXT_PUBLIC_API_URL, // "http://137.193.65.47:8080"
   timeout: 20000,
   headers: {},
 });
