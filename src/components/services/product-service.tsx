@@ -3,7 +3,7 @@ import authHeader from "./auth-header";
 import Product from "../../model/product";
 
 class ProductService {
-  private companyName: string = "DeoniMSP"; // change to env variable at some point
+  private companyName: string = process.env.NEXT_PUBLIC_COMPANY_NAME;
 
   createProduct(product: Product) {
     return instance.post("/submit?function=createObject", product, {

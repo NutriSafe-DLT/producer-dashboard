@@ -39,7 +39,10 @@ interface StockItem {
 function Row(props: {
   row: StockItem;
   handleProductDeletion: (id: string) => Promise<AxiosResponse<any>>;
-  handleSetReceiver: (id: string) => Promise<AxiosResponse<any>>;
+  handleSetReceiver: (
+    id: string,
+    receiver: string
+  ) => Promise<AxiosResponse<any>>;
 }) {
   const { row } = props;
   const [open, setOpen] = useState(false);
@@ -131,14 +134,14 @@ function Row(props: {
         handleClose={() => setOpenDeleteion(false)}
         handleSubmit={props.handleProductDeletion}
         open={openDeleteion}
-        productId={row.key}
+        param={row.key}
       />
       <ConfirmDialog
         title="Are your sure you want to start an alarm for this product?"
         handleClose={() => setOpenAlert(false)}
         handleSubmit={handleSetAlert}
         open={openAlert}
-        productId={row.key}
+        param={row.key}
       />
       <SetReceiverDialog
         handleClose={() => setOpenSetReceiver(false)}

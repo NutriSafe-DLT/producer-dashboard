@@ -5,28 +5,37 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { AxiosResponse } from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 
-export interface ConfirmDialogProps {
+export interface AddWhitelistToUserProps {
   open: boolean;
-  title: string;
   handleClose: Function;
   handleSubmit: (any) => Promise<AxiosResponse>;
-  param: any;
+  username: string;
+  userWhitelists: string[];
+  allWhitelists: string[];
 }
 
-const ConfirmDialog = ({
+const AddWhitelistToUser = ({
   open,
-  title,
   handleClose,
   handleSubmit,
-  param,
-}: ConfirmDialogProps) => {
+  username,
+  userWhitelists,
+  allWhitelists,
+}: AddWhitelistToUserProps) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
+  const [selectedWhitelist, setSelectedWhitelist] = React.useState("");
+
   return (
     <Dialog
       open={open}
@@ -42,7 +51,30 @@ const ConfirmDialog = ({
         ) : (
           <div />
         )}
-        <Typography>{title}</Typography>
+        <Typography>
+          Which whitelist do you want to add to {username}?
+        </Typography>
+        <TextField
+          margin="dense"
+          id="newAttribute"
+          label="Attribute"
+          fullWidth
+          select
+          onChange={(e) => setSelectedWhitelist(e.target.value + "")}
+          value={selectedWhitelist}
+          defaultValue=""
+        >
+          {allWhitelists
+            .filter((all) => !userWhitelists.includes(all))
+            .map((item) => {
+              return (
+                <MenuItem key={item + "key"} value={item}>
+                  {item}
+                </MenuItem>
+              );
+            })}
+          <option value="outside" />
+        </TextField>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose()} color="primary">
@@ -52,7 +84,7 @@ const ConfirmDialog = ({
           color="primary"
           variant="outlined"
           onClick={(e) => {
-            handleSubmit(param)
+            handleSubmit({ whitelist: selectedWhitelist, username })
               .catch(() => setError(true))
               .then(() => setError(false))
               .finally(() => setLoading(false));
@@ -66,4 +98,4 @@ const ConfirmDialog = ({
   );
 };
 
-export default ConfirmDialog;
+export default AddWhitelistToUser;

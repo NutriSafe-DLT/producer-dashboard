@@ -5,28 +5,35 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { AxiosResponse } from "axios";
-import React from "react";
+import React, { useEffect } from "react";
 
-export interface ConfirmDialogProps {
+export interface AddFunctionToWhitelistProps {
   open: boolean;
-  title: string;
   handleClose: Function;
   handleSubmit: (any) => Promise<AxiosResponse>;
-  param: any;
+  whitelist: string;
+  funcs: string[];
 }
 
-const ConfirmDialog = ({
+const AddFunctionToWhitelist = ({
   open,
-  title,
   handleClose,
   handleSubmit,
-  param,
-}: ConfirmDialogProps) => {
+  whitelist,
+  funcs,
+}: AddFunctionToWhitelistProps) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
+  const [functionName, setFunctionName] = React.useState("");
+
   return (
     <Dialog
       open={open}
@@ -42,7 +49,18 @@ const ConfirmDialog = ({
         ) : (
           <div />
         )}
-        <Typography>{title}</Typography>
+        <Typography>
+          Type a function that you want to add to {whitelist}?
+        </Typography>
+        <TextField
+          margin="dense"
+          id="func"
+          label="Function"
+          fullWidth
+          onChange={(e) => setFunctionName(e.target.value + "")}
+          value={functionName}
+          defaultValue=""
+        ></TextField>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose()} color="primary">
@@ -52,7 +70,7 @@ const ConfirmDialog = ({
           color="primary"
           variant="outlined"
           onClick={(e) => {
-            handleSubmit(param)
+            handleSubmit({ whitelist, func: functionName })
               .catch(() => setError(true))
               .then(() => setError(false))
               .finally(() => setLoading(false));
@@ -66,4 +84,4 @@ const ConfirmDialog = ({
   );
 };
 
-export default ConfirmDialog;
+export default AddFunctionToWhitelist;
