@@ -1,8 +1,9 @@
 import * as React from "react";
 import AuthService from "../services/user-service";
 
-const WithAuthentication = ({ Component, requiredRole }) => {
-  if (AuthService.hasRole(requiredRole)) return <Component />;
+const WithAuthentication = (props) => {
+  const { requiredRole } = props;
+  if (AuthService.hasRole(requiredRole)) return <>{props.children}</>;
   else
     return (
       <h3>You are not authorized to access this part of the application</h3>
