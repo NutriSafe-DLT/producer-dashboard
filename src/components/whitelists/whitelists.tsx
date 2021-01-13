@@ -95,6 +95,12 @@ const WhitelistList = () => {
         open={deleteDialogOpen !== ""}
         param={deleteDialogOpen}
       />
+      <CreateWhitelistDialog
+        open={createDialogOpen}
+        handleClose={() => setCreateDialogOpen(false)}
+        handleSubmit={userManagementService.createWhitelist}
+        whitelists={whitelists}
+      ></CreateWhitelistDialog>
     </TableContainer>
   );
 };

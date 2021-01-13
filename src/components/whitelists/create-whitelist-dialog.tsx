@@ -18,7 +18,7 @@ export interface AddFunctionToWhitelistProps {
   whitelists: string[];
 }
 
-const AddFunctionToWhitelist = ({
+const CreateWhitelistDialog = ({
   open,
   handleClose,
   handleSubmit,
@@ -51,7 +51,9 @@ const AddFunctionToWhitelist = ({
         ) : (
           <div />
         )}
-        <Typography>What is the name of the new whitelist?</Typography>
+        <Typography>
+          What is the name of the new whitelist supposed to be?
+        </Typography>
         <TextField
           margin="dense"
           id="func"
@@ -89,4 +91,4 @@ const AddFunctionToWhitelist = ({
   );
 };
 
-export default AddFunctionToWhitelist;
+export default CreateWhitelistDialog;
