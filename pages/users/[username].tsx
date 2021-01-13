@@ -13,6 +13,8 @@ interface UserDetails {
 
 export default function ProductInboxPage() {
   const [user, setUser] = React.useState<UserDetails>();
+  const router = useRouter();
+  const { username } = router.query;
 
   useEffect(() => {
     if (Array.isArray(username)) {
@@ -26,8 +28,6 @@ export default function ProductInboxPage() {
     }
   });
 
-  const router = useRouter();
-  const { username } = router.query;
   return (
     <MainLayout>
       {user ? (
