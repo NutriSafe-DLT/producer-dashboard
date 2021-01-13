@@ -8,12 +8,12 @@ import requests
 import os
 import time
 import getpass
-import unicodedata
 from consolemenu import *
 from consolemenu.items import *
 
 currentToken = 'NONE'
 ORGANIZATIONS_LIST = ["DeoniMSP","BrangusMSP","PinzgauerMSP","AuthorityMSP","DurocMSP"]
+SECONDS_TO_WAIT_FOR_HTTP_REQUESTS = 10
 apiPassword = ''
 
 
@@ -33,30 +33,30 @@ def generate_random_objects():
     generate_object_links_produces( milkObjects, cheeseObjects )
 
 def generate_scenario(fileName):
+    read_api_password()
     scenarioFile = open (fileName, 'r' )
     scenario = json.loads( scenarioFile.read() )
     folderName = scenario["scenarioName"]
-    for str in scenario["productsInOrder"]:
-        print(str)
     
     for productName in scenario["productsInOrder"]:
         product_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'scenario', folderName, 'products',productName)
         productFiles = [f for f in os.listdir('./scenario/' + folderName + '/' + 'products' + '/' + productName )]
         print(productFiles)
         for prodFileName in productFiles:
-            createObjectFromJSONFile ( unicodedata.normalize('NFC',prodFileName) )
+            createObjectFromJSONFile ( os.path.join(product_dir , prodFileName.encode('utf-8')) )
     relations_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'scenario', folderName, 'relations')
     relationFiles = [f for f in os.listdir(relations_dir) if os.path.isfile(f)]
     print(relationFiles)
     for relFileName in relationFiles:
-        createRelationFromJSONFile( relFileName )
+        createRelationFromJSONFile( relFileName.encode('utf-8') )
     scenarioFile.close()
 
 def createObjectFromJSONFile (objFileName):
-    objectFile = open (objFileName, 'r')
-    payload = json.loads( objectFile.read() )
+    with open (objFileName) as objectFile:
+        payload = json.loads( objectFile.read() )
+        print(json.dumps(payload))
     api_postasadmin_with_method( 'createObject', json.dumps(payload) )
-    objectFile.close()
+    #objectFile.close()
 
 def createRelationFromJSONFile (relFileName):
     relationFile = open (relFileName, 'r')
@@ -185,7 +185,7 @@ def api_postasadmin_with_method(methodname, payload):
     'Content-Type': 'application/json',
     'Cookie': 'JSESSIONID=C7CD65AFB9E312D4CFD2AD9ABE9F7A10'
     }
-    r = requests.post( url = API_ENDPOINT, data = payload, headers = headers)  
+    r = requests.post( url = API_ENDPOINT, data = payload, headers = headers, timeout = SECONDS_TO_WAIT_FOR_HTTP_REQUESTS) 
     if r.status_code == requests.codes.unauthorized | r.status_code == requests.codes.forbidden:
         print('Renewing token...')
         token_response = get_auth_token()
@@ -196,8 +196,10 @@ def api_postasadmin_with_method(methodname, payload):
                 'Content-Type': 'application/json',
                 'Cookie': 'JSESSIONID=C7CD65AFB9E312D4CFD2AD9ABE9F7A10'
             }
-            r  = requests.post( url = API_ENDPOINT, data = payload, headers = headers)   
-       
+            try:
+                r  = requests.post( url = API_ENDPOINT, data = payload, headers = headers, imeout = SECONDS_TO_WAIT_FOR_HTTP_REQUESTS)
+            except:
+                print("Request errored, status code: " + str(r.status_code))   
 
 def get_auth_token():
     API_ENDPOINT = 'http://137.193.65.47:8080/auth'
@@ -209,7 +211,7 @@ def get_auth_token():
             'password':apiPassword
            }  
     # sending post request and saving response as response object 
-    r = requests.post(url = API_ENDPOINT, data = json.dumps(data)) 
+    r = requests.post(url = API_ENDPOINT, data = json.dumps(data), timeout = SECONDS_TO_WAIT_FOR_HTTP_REQUESTS) 
     if r.status_code == requests.codes.ok:
       return r.json()['token']
     else:
