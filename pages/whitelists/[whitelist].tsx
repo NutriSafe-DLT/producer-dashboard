@@ -5,14 +5,14 @@ import userManagementService from "../../src/components/services/user-management
 import { WhitelistDetails } from "../../src/components/whitelists/whitelist-details";
 
 export default function WhitelistDetailsPage() {
-  const [funcs, setFuncs] = React.useState();
+  const [functions, setFunctions] = React.useState();
   const [whitelistNameState, setWhitelistNameState] = React.useState<string>();
 
   useEffect(() => {
     const whitelistName = Array.isArray(whitelist) ? whitelist[0] : whitelist;
     setWhitelistNameState(whitelistName);
     userManagementService.getWhitelists().then((res) => {
-      setFuncs(res.data[whitelistName]);
+      setFunctions(res.data[whitelistName]);
     });
   });
 
@@ -20,9 +20,9 @@ export default function WhitelistDetailsPage() {
   const { whitelist } = router.query;
   return (
     <MainLayout>
-      {funcs ? (
+      {functions ? (
         <WhitelistDetails
-          functions={funcs}
+          functions={functions}
           whitelistName={whitelistNameState}
         ></WhitelistDetails>
       ) : (
