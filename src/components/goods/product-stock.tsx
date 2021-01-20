@@ -2,26 +2,23 @@ import {
   Box,
   Collapse,
   IconButton,
-  InputAdornment,
+  TableBody,
+  TableCell,
+  TableRow,
   Typography,
 } from "@material-ui/core";
-import { useEffect, useState } from "react";
-import React from "react";
-import productService from "../services/product-service";
-import { TableBody, TableCell, TableRow } from "@material-ui/core";
 import {
   ArrowForward,
   Delete,
   KeyboardArrowDown,
   KeyboardArrowUp,
   ReportProblem,
-  Search,
 } from "@material-ui/icons";
-import SetReceiverDialog from "./set-receiver-dialog";
-import useTable from "../base/useTable";
+import React, { useEffect, useState } from "react";
 import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
-import Controls from "../base/controls/Controls";
 import SearchInputField from "../base/searchInput";
+import useTable from "../base/useTable";
+import productService from "../services/product-service";
 
 interface StockItem {
   alarmFlag: boolean;
@@ -147,7 +144,7 @@ const ProductStock = () => {
     subtitle: "",
   });
   const headCells = [
-    { id: "toggle", label: "" },
+    { id: "toggle", label: "Text" },
     { id: "key", label: "Key", enableSorting: true },
     { id: "productName", label: "Product" },
     { id: "amount", label: "Amount", enableSorting: true },
@@ -214,8 +211,8 @@ const ProductStock = () => {
             )
           )}
         </TableBody>
-        <TblPagination />
       </TblContainer>
+      <TblPagination />
       <ConfirmDialog
         setConfirmDialog={setConfirmDialog}
         confirmDialog={confirmDialog}

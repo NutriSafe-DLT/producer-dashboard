@@ -1,14 +1,7 @@
-import {
-  IconButton,
-  InputAdornment,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "@material-ui/core";
-import { Check, Clear, Search } from "@material-ui/icons";
+import { IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
+import { Check, Clear } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
-import Controls from "../base/controls/Controls";
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
 import productService from "../services/product-service";

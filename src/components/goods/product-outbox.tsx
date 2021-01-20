@@ -1,11 +1,10 @@
-import { IconButton, TableBody } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import productService from "../services/product-service";
-import { TableCell, TableRow } from "@material-ui/core";
+import { IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { ArrowBack, Delete, ReportProblem } from "@material-ui/icons";
-import useTable from "../base/useTable";
+import React, { useEffect, useState } from "react";
 import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
 import SearchInputField from "../base/searchInput";
+import useTable from "../base/useTable";
+import productService from "../services/product-service";
 
 interface OutboxItem {
   receiver: string;
