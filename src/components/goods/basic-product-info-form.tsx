@@ -1,105 +1,67 @@
+import { Typography } from "@material-ui/core";
 import * as React from "react";
-import {
-  Container,
-  Typography,
-  TextField,
-  MenuItem,
-  FormGroup,
-} from "@material-ui/core";
+import Controls from "../base/controls/Controls";
+import { Form } from "../base/useForm";
 
-interface BasicPorductFormProps {
-  productList: string[],
-  unitList: string[],
-  handleInputChange,
-  handleProductChange,
-  handleUnitChange,
-}
+const BasicProductForm = (props) => {
+  const {
+    setSelectedProduct,
+    productOptions,
+    unitOptions,
+    values,
+    errors,
+    handleInputChange,
+  } = props;
 
-const BasicPorductForm = ({
-  productList,
-  unitList,
-  handleInputChange,
-  handleProductChange,
-  handleUnitChange,
-}: BasicPorductFormProps) => {
   return (
-    <Container component="main" maxWidth="xs">
+    <>
       <Typography component="h1" variant="h5">
-        Basisinformationen
+        Basic information
       </Typography>
-      <form>
-        <TextField
-          id="product"
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          select
+      <Form>
+        <Controls.Select
           label="Product"
-          onChange={handleProductChange}
-          required
-        >
-          {productList.map((option) => (
-            <MenuItem key={option + "id"} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          required
-          name="id"
+          name="product"
+          options={productOptions}
+          onChange={(e) => {
+            handleInputChange(e);
+            setSelectedProduct(e.target.value);
+          }}
+          value={values.product}
+          error={errors.product}
+        />
+        <Controls.Input
           label="ID"
-          type="text"
-          id="id"
+          name="id"
           onChange={handleInputChange}
-          InputLabelProps={{ shrink: true }}
+          value={values.id}
+          error={errors.id}
         />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          name="pdc"
+        <Controls.Input
           label="Predeccessor"
-          type="text"
-          id="pdc"
-          fullWidth
+          name="pdc"
           onChange={handleInputChange}
-          InputLabelProps={{ shrink: true }}
+          value={values.pdc}
+          error={errors.pdc}
         />
-        <FormGroup row style={{ width: "100%" }}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            name="amount"
-            label="Amount"
-            type="number"
-            id="amount"
-            onChange={handleInputChange}
-            InputLabelProps={{ shrink: true }}
-            style={{ flexGrow: 1 }}
-          />
-          <TextField
-            id="unit"
-            name="unit"
-            variant="outlined"
-            margin="normal"
-            select
-            label="Unit"
-            onChange={handleUnitChange}
-          >
-            {unitList.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        </FormGroup>
-      </form>
-    </Container>
+        <Controls.Input
+          label="Amount"
+          name="amount"
+          onChange={handleInputChange}
+          value={values.amount}
+          error={errors.amount}
+        />
+        <Controls.Select
+          label="Unit"
+          name="unit"
+          options={unitOptions}
+          onChange={handleInputChange}
+          value={values.unit}
+          error={errors.unit}
+        />
+      </Form>
+    </>
   );
 };
 
-export default BasicPorductForm;
+export default BasicProductForm;
