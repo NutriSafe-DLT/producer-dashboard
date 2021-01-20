@@ -31,7 +31,7 @@ export interface ConfirmDialogObj {
   title: string;
   subtitle: string;
   isOpen: boolean;
-  onConfirm: () => void;
+  onConfirm?: () => void;
 }
 
 export default function ConfirmDialog(props: ConfirmDialogProps) {

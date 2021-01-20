@@ -1,11 +1,11 @@
 import React from "react";
-import ProductInboxNew from "../../src/components/goods/product-inbox-new";
+import ProductInbox from "../../src/components/goods/product-inbox";
 import MainLayout from "../../src/components/layout";
 
 export default function ProductInboxPage() {
   return (
     <MainLayout>
-      <ProductInboxNew></ProductInboxNew>
+      <ProductInbox></ProductInbox>
     </MainLayout>
   );
 }

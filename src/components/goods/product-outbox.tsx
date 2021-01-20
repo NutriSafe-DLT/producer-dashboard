@@ -1,17 +1,11 @@
 import { IconButton, TableBody } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import productService from "../services/product-service";
-import {
-  Table,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@material-ui/core";
+import { TableCell, TableRow } from "@material-ui/core";
 import { ArrowBack, Delete, ReportProblem } from "@material-ui/icons";
-import ConfirmDialog from "./confirmation-dialog";
-import { AxiosResponse } from "axios";
 import useTable from "../base/useTable";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import SearchInputField from "../base/searchInput";
 
 interface OutboxItem {
   receiver: string;
@@ -24,33 +18,37 @@ interface OutboxItem {
 
 const ProductOutbox = () => {
   const [productState, setProductState] = useState<OutboxItem[]>([]);
-  const [openAlert, setOpenAlert] = useState(false);
-  const [openDeleteion, setOpenDeleteion] = useState(false);
-  const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<OutboxItem>();
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogObj>({
+    isOpen: false,
+    title: "",
+    subtitle: "",
+  });
 
   useEffect(() => {
+    updateItems();
+  }, []);
+
+  function updateItems() {
     productService.productsOutbox().then((res) => {
       if (res.data.length > 0) setProductState([JSON.parse(res.data)]);
     });
-    return () => setProductState([]);
-  }, [openAlert, openDeleteion, withdrawOpen]);
+  }
 
-  function handleWithdraw(id: string): Promise<AxiosResponse<any>> {
-    return productService.withdrawProductFromOutbox(id);
+  function handleWithdraw(id: string) {
+    return productService.withdrawProductFromOutbox(id).then(updateItems);
   }
-  function handleDeletion(id: string): Promise<AxiosResponse<any>> {
-    return productService.deleteProduct(id);
+  function handleDeletion(id: string) {
+    return productService.deleteProduct(id).then(updateItems);
   }
-  function handleAlert(id: string): Promise<AxiosResponse<any>> {
-    return productService.activateAlarmForProduct(id);
+  function handleAlert(id: string) {
+    return productService.activateAlarmForProduct(id).then(updateItems);
   }
 
   const headCells = [
-    { id: "productName", label: "Product", enableSearch: true },
+    { id: "productName", label: "Product" },
     { id: "amount", label: "Amount", enableSorting: true },
     { id: "unit", label: "Unit" },
-    { id: "receiver", label: "To", enableSorting: true, enableSearch: true },
+    { id: "receiver", label: "To", enableSorting: true },
     { id: "actions", label: "" },
   ];
 
@@ -65,6 +63,11 @@ const ProductOutbox = () => {
 
   return (
     <>
+      <SearchInputField
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        key="search-input"
+      />
       <TblContainer>
         <TblHead />
         <TableBody>
@@ -85,32 +88,40 @@ const ProductOutbox = () => {
                     aria-label="expand row"
                     size="small"
                     onClick={() => {
-                      setSelectedProduct(product);
-                      setWithdrawOpen(true);
+                      setConfirmDialog({
+                        isOpen: true,
+                        title: `Are your sure you want to move this product (${product.key}) back to the stock?`,
+                        subtitle: "This can cause major consequences",
+                        onConfirm: () => handleWithdraw(product.key),
+                      });
                     }}
                   >
                     <ArrowBack />
                   </IconButton>
-                </TableCell>
-                <TableCell>
                   <IconButton
                     aria-label="expand row"
                     size="small"
                     onClick={() => {
-                      setSelectedProduct(product);
-                      setOpenAlert(true);
+                      setConfirmDialog({
+                        isOpen: true,
+                        title: `Are your sure you want to start an alert for this product (${product.key})?`,
+                        subtitle: "This can cause major consequences",
+                        onConfirm: () => handleAlert(product.key),
+                      });
                     }}
                   >
                     <ReportProblem />
                   </IconButton>
-                </TableCell>
-                <TableCell>
                   <IconButton
                     aria-label="expand row"
                     size="small"
                     onClick={() => {
-                      setSelectedProduct(product);
-                      setOpenDeleteion(true);
+                      setConfirmDialog({
+                        isOpen: true,
+                        title: `Are your sure you want to delete this product (${product.key})?`,
+                        subtitle: "This action is irreversible",
+                        onConfirm: () => handleDeletion(product.key),
+                      });
                     }}
                   >
                     <Delete />
@@ -123,25 +134,8 @@ const ProductOutbox = () => {
       </TblContainer>
       <TblPagination />
       <ConfirmDialog
-        title="Are your sure you want to delete this product?"
-        handleClose={() => setOpenDeleteion(false)}
-        handleSubmit={handleDeletion}
-        open={openDeleteion}
-        productId={selectedProduct.key}
-      />
-      <ConfirmDialog
-        title="Are your sure you want to start an alarm for this product?"
-        handleClose={() => setOpenAlert(false)}
-        handleSubmit={handleAlert}
-        open={openAlert}
-        productId={selectedProduct.key}
-      />
-      <ConfirmDialog
-        title="Are your sure you want to move this product back to the stock?"
-        handleClose={() => setWithdrawOpen(false)}
-        handleSubmit={handleWithdraw}
-        open={withdrawOpen}
-        productId={selectedProduct.key}
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
       />
     </>
   );
