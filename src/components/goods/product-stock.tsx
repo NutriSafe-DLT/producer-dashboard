@@ -36,14 +36,16 @@ interface StockItem {
   attributes: any;
 }
 
-function Row(props: {
+interface ProductStockRowProps {
   row: StockItem;
   handleProductDeletion: (id: string) => Promise<AxiosResponse<any>>;
   handleSetReceiver: (
     id: string,
     receiver: string
   ) => Promise<AxiosResponse<any>>;
-}) {
+}
+
+function Row(props: ProductStockRowProps) {
   const { row } = props;
   const [open, setOpen] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);

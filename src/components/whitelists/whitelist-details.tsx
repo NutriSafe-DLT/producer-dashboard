@@ -20,26 +20,26 @@ import AddFunctionToWhitelist from "./add-function-to-whitelist-dialog";
 
 interface WhitelistDetailsProps {
   whitelistName: string;
-  functions: string[];
+  whitelistAPIFunctions: string[];
 }
 
 export const WhitelistDetails = ({
   whitelistName,
-  functions,
+  whitelistAPIFunctions,
 }: WhitelistDetailsProps) => {
   const [funcs, setFuncs] = useState<string[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addFunctionDialogOpen, setAddFunctionDialogOpen] = useState(false);
 
   useEffect(() => {
-    setFuncs(functions);
+    setFuncs(whitelistAPIFunctions);
   }, []);
 
   function handleRemoveFuncFromWhitelist(
     func: string
   ): Promise<AxiosResponse<any>> {
     const promise = userManagementService.unlinkFunctionFromWhitelist({
-      whitelist: whitelistName,
+      whitelistName: whitelistName,
       func,
     });
     promise.then(() => {

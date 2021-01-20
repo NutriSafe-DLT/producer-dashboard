@@ -52,7 +52,7 @@ const AddWhitelistToUser = ({
           <div />
         )}
         <Typography>
-          Which whitelist do you want to add to {username}?
+          Which whitelist do you want to link to {username}?
         </Typography>
         <TextField
           margin="dense"
