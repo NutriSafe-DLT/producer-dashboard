@@ -13,7 +13,7 @@ from consolemenu.items import *
 
 currentToken = 'NONE'
 ORGANIZATIONS_LIST = ["DeoniMSP","BrangusMSP","PinzgauerMSP","AuthorityMSP","DurocMSP"]
-SECONDS_TO_WAIT_FOR_HTTP_REQUESTS = 10
+SECONDS_TO_WAIT_FOR_HTTP_REQUESTS = 30
 apiPassword = ''
 
 
@@ -45,7 +45,7 @@ def generate_scenario(fileName):
         for prodFileName in productFiles:
             createObjectFromJSONFile ( os.path.join(product_dir , prodFileName.encode('utf-8')) )
     relations_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'scenario', folderName, 'relations')
-    relationFiles = [f for f in os.listdir(relations_dir) if os.path.isfile(f)]
+    relationFiles = [f for f in os.listdir(relations_dir)]
     print(relationFiles)
     for relFileName in relationFiles:
         createRelationFromJSONFile( relFileName.encode('utf-8') )
@@ -197,9 +197,11 @@ def api_postasadmin_with_method(methodname, payload):
                 'Cookie': 'JSESSIONID=C7CD65AFB9E312D4CFD2AD9ABE9F7A10'
             }
             try:
-                r  = requests.post( url = API_ENDPOINT, data = payload, headers = headers, imeout = SECONDS_TO_WAIT_FOR_HTTP_REQUESTS)
+                r  = requests.post( url = API_ENDPOINT, data = payload, headers = headers, timeout = SECONDS_TO_WAIT_FOR_HTTP_REQUESTS)
             except:
-                print("Request errored, status code: " + str(r.status_code))   
+                print("Request errored, status code: " + str(r.status_code))
+    else:
+        print("Request errored, status code: " + str(r.status_code))   
 
 def get_auth_token():
     API_ENDPOINT = 'http://137.193.65.47:8080/auth'
@@ -226,9 +228,9 @@ random_based_item = FunctionItem("Random generation of objects", generate_random
 menu.append_item(initialization_item)
 menu.append_item(scenario_based_item)
 menu.append_item(random_based_item)
-#init_demo_datastructures()
-##menu.show()
-generate_scenario("scenarioCheese.json")
+
+menu.show()
+
 
 
 
