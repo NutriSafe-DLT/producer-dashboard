@@ -3,6 +3,7 @@ import RadioGroup from "./RadioGroup";
 import Select from "./Select";
 import Checkbox from "./Checkbox";
 import Button from "./Button";
+import WaitingButton from "./WaitingButton";
 
 const Controls = {
   Input,
@@ -10,6 +11,7 @@ const Controls = {
   Select,
   Checkbox,
   Button,
+  WaitingButton,
 };
 
 export default Controls;

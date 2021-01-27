@@ -1,21 +1,17 @@
 import {
-  Button,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
   Typography,
 } from "@material-ui/core";
 import { AxiosResponse } from "axios";
 import React, { useEffect } from "react";
+import Controls from "../base/controls/Controls";
+import { Option } from "../base/controls/Option";
 
-export interface AddWhitelistToUserProps {
+export interface AddWhitelistToUserDialogProps {
   open: boolean;
   handleClose: Function;
   handleSubmit: (any) => Promise<AxiosResponse>;
@@ -24,78 +20,53 @@ export interface AddWhitelistToUserProps {
   allWhitelists: string[];
 }
 
-const AddWhitelistToUser = ({
+const AddWhitelistToUserDialog = ({
   open,
   handleClose,
   handleSubmit,
   username,
   userWhitelists,
   allWhitelists,
-}: AddWhitelistToUserProps) => {
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(false);
+}: AddWhitelistToUserDialogProps) => {
   const [selectedWhitelist, setSelectedWhitelist] = React.useState("");
+  const [whitelistOptions, setWhitelistOptions] = React.useState<Option[]>([]);
+
+  useEffect(() => {
+    const options: Option[] = [];
+    allWhitelists
+      .filter((element) => !userWhitelists.includes(element))
+      .map((element) => options.push({ id: element, title: element }));
+    setWhitelistOptions(options);
+  }, []);
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => handleClose()}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">Confirm Action</DialogTitle>
+    <Dialog open={open} onClose={() => handleClose()}>
+      <DialogTitle>
+        Which whitelist do you want to link to {username}?
+      </DialogTitle>
       <DialogContent>
-        {error ? (
-          <Typography style={{ backgroundColor: "lightpink" }}>
-            Something went wrong
-          </Typography>
-        ) : (
-          <div />
-        )}
-        <Typography>
-          Which whitelist do you want to link to {username}?
-        </Typography>
-        <TextField
-          margin="dense"
-          id="newAttribute"
-          label="Attribute"
-          fullWidth
-          select
-          onChange={(e) => setSelectedWhitelist(e.target.value + "")}
+        <Controls.Select
+          name="whitelistName"
+          options={whitelistOptions}
+          error=""
+          label="Whitelist"
+          onChange={(e) => setSelectedWhitelist(e.target.value)}
           value={selectedWhitelist}
-          defaultValue=""
-        >
-          {allWhitelists
-            .filter((all) => !userWhitelists.includes(all))
-            .map((item) => {
-              return (
-                <MenuItem key={item + "key"} value={item}>
-                  {item}
-                </MenuItem>
-              );
-            })}
-          <option value="outside" />
-        </TextField>
+        />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleClose()} color="primary">
+        <Controls.Button onClick={() => handleClose()} color="secondary">
           Cancel
-        </Button>
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={(e) => {
+        </Controls.Button>
+        <Controls.WaitingButton
+          onClick={() =>
             handleSubmit({ whitelist: selectedWhitelist, username })
-              .catch(() => setError(true))
-              .then(() => setError(false))
-              .finally(() => setLoading(false));
-            setLoading(true);
-          }}
-        >
-          {loading ? <CircularProgress color="primary" size={20} /> : "Confirm"}
-        </Button>
+          }
+          text="Add"
+        ></Controls.WaitingButton>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddWhitelistToUser;
+export default AddWhitelistToUserDialog;

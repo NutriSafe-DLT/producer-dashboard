@@ -78,6 +78,7 @@ const AddGoods = () => {
   }, []);
 
   useEffect(() => {
+    // set unit and product options after productMetaDef is loaded
     if (productsMetdaDef) {
       const productOptions: Option[] = [];
       Object.keys(

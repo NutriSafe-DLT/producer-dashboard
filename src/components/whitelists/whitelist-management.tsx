@@ -1,34 +1,46 @@
-import { Button, IconButton, Typography } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
 import {
+  Button,
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@material-ui/core";
-import { Check, Clear, Delete, Info } from "@material-ui/icons";
-import { AxiosResponse } from "axios";
-import userManagementService from "../services/user-management-service";
-import ConfirmDialog from "../goods/confirmation-dialog";
+import { Delete, Info } from "@material-ui/icons";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import userManagementService from "../services/user-management-service";
 import CreateWhitelistDialog from "./create-whitelist-dialog";
 
 const WhitelistManagement = () => {
   const [whitelists, setWhitelists] = useState<string[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState("");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogObj>({
+    isOpen: false,
+    title: "",
+    subtitle: "",
+  });
   const router = useRouter();
 
   useEffect(() => {
+    updateItems()
+  }, []);
+
+  const updateItems = () => {
     userManagementService.getWhitelists().then((res) => {
       setWhitelists(Object.keys(res.data));
     });
-    return () => setWhitelists([]);
-  }, [deleteDialogOpen, createDialogOpen]);
+  }
 
-  return (
+  const handleDeleteWhitelist = (whitlistName: string) {
+    userManagementService.deleteWhitelist(whitlistName).then(() => updateItems())
+  }
+
+  return (<>
     <TableContainer>
       <div
         style={{
@@ -61,13 +73,21 @@ const WhitelistManagement = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {whitelists.map((whitelist: string) => (
-            <TableRow key={whitelist}>
-              <TableCell>{whitelist}</TableCell>
+          {whitelists.map((whitelistName: string) => (
+            <TableRow key={whitelistName}>
+              <TableCell>{whitelistName}</TableCell>
               <TableCell>
                 <IconButton
                   color="primary"
-                  onClick={() => setDeleteDialogOpen(whitelist)}
+                  onClick={() => {
+                    setConfirmDialog({
+                      isOpen: true,
+                      title: `Are your sure you want to delete ${whitelistName}?`,
+                      subtitle: "This action is irreversible",
+                      onConfirm: () =>
+                      handleDeleteWhitelist(whitelistName),
+                    });
+                  }}
                 >
                   <Delete />
                 </IconButton>
@@ -76,7 +96,7 @@ const WhitelistManagement = () => {
                 <IconButton
                   color="primary"
                   onClick={() =>
-                    router.push("/whitelists/" + whitelist, undefined, {
+                    router.push("/whitelists/" + whitelistName, undefined, {
                       shallow: false,
                     })
                   }
@@ -88,13 +108,6 @@ const WhitelistManagement = () => {
           ))}
         </TableBody>
       </Table>
-      <ConfirmDialog
-        title={"Are your sure you want to delete this whitelist?"}
-        handleClose={() => setDeleteDialogOpen("")}
-        handleSubmit={userManagementService.deleteWhitelist}
-        open={deleteDialogOpen !== ""}
-        param={deleteDialogOpen}
-      />
       <CreateWhitelistDialog
         open={createDialogOpen}
         handleClose={() => setCreateDialogOpen(false)}
@@ -102,6 +115,11 @@ const WhitelistManagement = () => {
         whitelists={whitelists}
       ></CreateWhitelistDialog>
     </TableContainer>
+    <ConfirmDialog
+    setConfirmDialog={setConfirmDialog}
+    confirmDialog={confirmDialog}
+  />
+  </>
   );
 };
 
