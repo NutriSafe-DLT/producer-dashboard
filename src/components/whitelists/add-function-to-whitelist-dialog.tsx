@@ -1,19 +1,13 @@
 import {
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
   Typography,
 } from "@material-ui/core";
 import { AxiosResponse } from "axios";
-import React, { useEffect } from "react";
+import React from "react";
 import Controls from "../base/controls/Controls";
 
 export interface AddFunctionToWhitelistProps {

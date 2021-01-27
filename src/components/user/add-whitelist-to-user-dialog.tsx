@@ -1,10 +1,8 @@
 import {
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Typography,
 } from "@material-ui/core";
 import { AxiosResponse } from "axios";
 import React, { useEffect } from "react";

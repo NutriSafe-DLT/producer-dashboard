@@ -27,99 +27,101 @@ const WhitelistManagement = () => {
   const router = useRouter();
 
   useEffect(() => {
-    updateItems()
+    updateItems();
   }, []);
 
   const updateItems = () => {
     userManagementService.getWhitelists().then((res) => {
       setWhitelists(Object.keys(res.data));
     });
-  }
+  };
 
-  const handleDeleteWhitelist = (whitlistName: string) {
-    userManagementService.deleteWhitelist(whitlistName).then(() => updateItems())
-  }
+  const handleDeleteWhitelist = (whitlistName: string) => {
+    userManagementService
+      .deleteWhitelist(whitlistName)
+      .then(() => updateItems());
+  };
 
-  return (<>
-    <TableContainer>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography variant="h6">Whitelists:</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setCreateDialogOpen(true)}
+  return (
+    <>
+      <TableContainer>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
         >
-          Create Whitelist
-        </Button>
+          <Typography variant="h6">Whitelists:</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setCreateDialogOpen(true)}
+          >
+            Create Whitelist
+          </Button>
+          <CreateWhitelistDialog
+            open={createDialogOpen}
+            handleClose={() => setCreateDialogOpen(false)}
+            handleSubmit={userManagementService.createWhitelist}
+            whitelists={whitelists}
+          />
+        </div>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Whitelist</TableCell>
+              <TableCell>Delete</TableCell>
+              <TableCell>Details</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {whitelists.map((whitelistName: string) => (
+              <TableRow key={whitelistName}>
+                <TableCell>{whitelistName}</TableCell>
+                <TableCell>
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      setConfirmDialog({
+                        isOpen: true,
+                        title: `Are your sure you want to delete ${whitelistName}?`,
+                        subtitle: "This action is irreversible",
+                        onConfirm: () => handleDeleteWhitelist(whitelistName),
+                      });
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    color="primary"
+                    onClick={() =>
+                      router.push("/whitelists/" + whitelistName, undefined, {
+                        shallow: false,
+                      })
+                    }
+                  >
+                    <Info />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
         <CreateWhitelistDialog
           open={createDialogOpen}
           handleClose={() => setCreateDialogOpen(false)}
           handleSubmit={userManagementService.createWhitelist}
           whitelists={whitelists}
-        />
-      </div>
-      <Table aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Whitelist</TableCell>
-            <TableCell>Delete</TableCell>
-            <TableCell>Details</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {whitelists.map((whitelistName: string) => (
-            <TableRow key={whitelistName}>
-              <TableCell>{whitelistName}</TableCell>
-              <TableCell>
-                <IconButton
-                  color="primary"
-                  onClick={() => {
-                    setConfirmDialog({
-                      isOpen: true,
-                      title: `Are your sure you want to delete ${whitelistName}?`,
-                      subtitle: "This action is irreversible",
-                      onConfirm: () =>
-                      handleDeleteWhitelist(whitelistName),
-                    });
-                  }}
-                >
-                  <Delete />
-                </IconButton>
-              </TableCell>
-              <TableCell>
-                <IconButton
-                  color="primary"
-                  onClick={() =>
-                    router.push("/whitelists/" + whitelistName, undefined, {
-                      shallow: false,
-                    })
-                  }
-                >
-                  <Info />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <CreateWhitelistDialog
-        open={createDialogOpen}
-        handleClose={() => setCreateDialogOpen(false)}
-        handleSubmit={userManagementService.createWhitelist}
-        whitelists={whitelists}
-      ></CreateWhitelistDialog>
-    </TableContainer>
-    <ConfirmDialog
-    setConfirmDialog={setConfirmDialog}
-    confirmDialog={confirmDialog}
-  />
-  </>
+        ></CreateWhitelistDialog>
+      </TableContainer>
+      <ConfirmDialog
+        setConfirmDialog={setConfirmDialog}
+        confirmDialog={confirmDialog}
+      />
+    </>
   );
 };
 
