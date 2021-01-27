@@ -13,24 +13,38 @@ import {
   TableRow,
   Typography,
 } from "@material-ui/core";
-import * as React from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
-import ConfirmDialog from "../goods/confirmation-dialog";
+import * as React from "react";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
 import userManagementService from "../services/user-management-service";
-import AddWhitelistToUser from "./add-whitelist-to-user-dialog";
+import AddWhitelistToUserDialog from "./add-whitelist-to-user-dialog";
 
 const UserDetailsCard = ({ userDetails }) => {
-  const [removeWhitelistOpen, setRemoveWhitelistOpen] = React.useState(false);
   const [addWhitelistDialogOpen, setAddWhitelistDialogOpen] = React.useState(
     false
   );
   const [allWhiteLists, setAllWhitelists] = React.useState([]);
+  const [confirmDialog, setConfirmDialog] = React.useState<ConfirmDialogObj>({
+    isOpen: false,
+    title: "",
+    subtitle: "",
+  });
 
   React.useEffect(() => {
+    updateWhitelists();
+  }, []);
+
+  const updateWhitelists = () => {
     userManagementService.getWhitelists().then((res) => {
       setAllWhitelists(Object.keys(res.data));
     });
-  }, []);
+  };
+
+  const handleUnlink = ({ username, whitelistName }) => {
+    userManagementService
+      .unlinkUserFromWhitelist({ username, whitelistName })
+      .then(() => updateWhitelists());
+  };
 
   return (
     <Card>
@@ -67,23 +81,23 @@ const UserDetailsCard = ({ userDetails }) => {
               <TableRow key={whitelist}>
                 <TableCell>{whitelist}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => setRemoveWhitelistOpen(true)}>
+                  <IconButton
+                    onClick={() => {
+                      setConfirmDialog({
+                        isOpen: true,
+                        title: `Are your sure you want to remove ${whitelist} from ${userDetails.username}?`,
+                        subtitle: "",
+                        onConfirm: () =>
+                          handleUnlink({
+                            username: userDetails.username,
+                            whitelistName: whitelist,
+                          }),
+                      });
+                    }}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
-                <ConfirmDialog
-                  open={removeWhitelistOpen}
-                  title={
-                    "Are you sure you want to remove " +
-                    whitelist +
-                    " from " +
-                    userDetails.username +
-                    "?"
-                  }
-                  handleClose={() => setRemoveWhitelistOpen(false)}
-                  handleSubmit={userManagementService.unlinkUserFromWhitelist}
-                  param={{ username: userDetails.username, whitelist }}
-                />
               </TableRow>
             ))}
           </TableBody>
@@ -91,18 +105,22 @@ const UserDetailsCard = ({ userDetails }) => {
         <Divider />
         <Typography variant="h6">Allowed Functions:</Typography>
         <List>
-          {userDetails.allowedFunctions.map((func: string) => (
-            <ListItem key={func}>{func}</ListItem>
+          {userDetails.allowedFunctions.map((functionName: string) => (
+            <ListItem>{functionName}</ListItem>
           ))}
         </List>
       </CardContent>
-      <AddWhitelistToUser
+      <AddWhitelistToUserDialog
         open={addWhitelistDialogOpen}
         handleClose={() => setAddWhitelistDialogOpen(false)}
         handleSubmit={userManagementService.linkUserToWhitelist}
         username={userDetails.username}
         userWhitelists={userDetails.linkedToWhitelists}
         allWhitelists={allWhiteLists}
+      />
+      <ConfirmDialog
+        setConfirmDialog={setConfirmDialog}
+        confirmDialog={confirmDialog}
       />
     </Card>
   );

@@ -24,20 +24,20 @@ class UserManagementService {
     );
   }
 
-  linkUserToWhitelist({ whitelist, username }) {
+  linkUserToWhitelist({ whitelistName, username }) {
     return instance.post(
       "/submit?function=linkUserToWhitelist",
-      { whitelist, username },
+      { whitelist: whitelistName, username },
       {
         headers: authHeader(),
       }
     );
   }
 
-  unlinkUserFromWhitelist({ whitelist, username }) {
+  unlinkUserFromWhitelist({ whitelistName, username }) {
     return instance.post(
       "/submit?function=unlinkUserFromWhitelist",
-      { whitelist, username },
+      { whitelist: whitelistName, username },
       {
         headers: authHeader(),
       }
@@ -45,19 +45,19 @@ class UserManagementService {
   }
 
   // Whitelists
-  createWhitelist(whitelist: string) {
+  createWhitelist(whitelistName: string) {
     return instance.post(
       "/submit?function=createWhitelist",
-      { whitelist },
+      { whitelist: whitelistName },
       {
         headers: authHeader(),
       }
     );
   }
-  deleteWhitelist(whitelist: string) {
+  deleteWhitelist(whitelistName: string) {
     return instance.post(
       "/submit?function=deleteWhitelist",
-      { whitelist },
+      { whitelist: whitelistName },
       {
         headers: authHeader(),
       }
@@ -65,20 +65,20 @@ class UserManagementService {
   }
 
   // function is a keyword in Typescript, so func is used
-  linkFunctionToWhitelist({ whitelist, func }) {
+  linkFunctionToWhitelist({ whitelistName, func }) {
     return instance.post(
       "/submit?function=linkFunctionToWhitelist",
-      { whitelist, function: func },
+      { whitelist: whitelistName, function: func },
       {
         headers: authHeader(),
       }
     );
   }
 
-  unlinkFunctionFromWhitelist({ whitelist, func }) {
+  unlinkFunctionFromWhitelist({ whitelistName, func }) {
     return instance.post(
       "/submit?function=unlinkFunctionFromWhitelist",
-      { whitelist, function: func },
+      { whitelist: whitelistName, function: func },
       {
         headers: authHeader(),
       }

@@ -4,17 +4,16 @@ import MainLayout from "../../src/components/layout";
 import userManagementService from "../../src/components/services/user-management-service";
 import UserDetailsCard from "../../src/components/user/user-details";
 
-interface UserDetails {
+class UserDetails {
   username: string;
   role: string;
   linkedToWhitelists: string[];
   allowedFunctions: string[];
 }
 
-export default function ProductInboxPage() {
+export default function UserDetailsPage() {
   const [user, setUser] = React.useState<UserDetails>();
-  const router = useRouter();
-  const { username } = router.query;
+  const { username } = useRouter().query;
 
   useEffect(() => {
     if (Array.isArray(username)) {

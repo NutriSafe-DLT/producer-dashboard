@@ -1,11 +1,11 @@
 import React from "react";
 import MainLayout from "../../src/components/layout";
-import WhitelistList from "../../src/components/whitelists/whitelists";
+import WhitelistManegement from "../../src/components/whitelists/whitelist-management";
 
 export default function WhitelistListPage() {
   return (
     <MainLayout>
-      <WhitelistList></WhitelistList>
+      <WhitelistManegement></WhitelistManegement>
     </MainLayout>
   );
 }

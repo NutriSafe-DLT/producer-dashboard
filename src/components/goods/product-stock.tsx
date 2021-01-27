@@ -1,20 +1,11 @@
 import {
   Box,
-  Button,
   Collapse,
   IconButton,
-  Typography,
-} from "@material-ui/core";
-import { useEffect, useState } from "react";
-import React from "react";
-import productService from "../services/product-service";
-import {
-  Table,
   TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
+  Typography,
 } from "@material-ui/core";
 import {
   ArrowForward,
@@ -23,9 +14,11 @@ import {
   KeyboardArrowUp,
   ReportProblem,
 } from "@material-ui/icons";
-import ConfirmDialog from "./confirmation-dialog";
-import { AxiosResponse } from "axios";
-import SetReceiverDialog from "./set-receiver-dialog";
+import React, { useEffect, useState } from "react";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import SearchInputField from "../base/searchInput";
+import useTable from "../base/useTable";
+import productService from "../services/product-service";
 
 interface StockItem {
   alarmFlag: boolean;
@@ -36,25 +29,23 @@ interface StockItem {
   attributes: any;
 }
 
-function Row(props: {
+interface ProductStockRowProps {
   row: StockItem;
-  handleProductDeletion: (id: string) => Promise<AxiosResponse<any>>;
-  handleSetReceiver: (
-    id: string,
-    receiver: string
-  ) => Promise<AxiosResponse<any>>;
-}) {
-  const { row } = props;
-  const [open, setOpen] = useState(false);
-  const [openAlert, setOpenAlert] = useState(false);
-  const [openDeleteion, setOpenDeleteion] = useState(false);
-  const [openSetReceiver, setOpenSetReceiver] = useState(false);
+  setConfirmDialog;
+  handleProductDeletion;
+  handleSetReceiver;
+  handleSetAlert;
+}
 
-  function handleSetAlert(id: string): Promise<AxiosResponse<any>> {
-    const promise = productService.activateAlarmForProduct(id);
-    promise.then((res) => (row.alarmFlag = true));
-    return promise;
-  }
+function Row(props: ProductStockRowProps) {
+  const {
+    row,
+    setConfirmDialog,
+    handleProductDeletion,
+    handleSetReceiver,
+    handleSetAlert,
+  } = props;
+  const [open, setOpen] = useState(false);
 
   return (
     <React.Fragment>
@@ -76,33 +67,45 @@ function Row(props: {
         <TableCell>{row.productName}</TableCell>
         <TableCell>{row.amount}</TableCell>
         <TableCell>{row.unit}</TableCell>
-        {row.alarmFlag ? (
-          <div />
-        ) : (
-          <TableCell>
+        <TableCell>
+          {row.alarmFlag ? (
+            <div />
+          ) : (
             <IconButton
               aria-label="expand row"
               size="small"
-              onClick={() => setOpenAlert(true)}
+              onClick={() => {
+                setConfirmDialog({
+                  isOpen: true,
+                  title: `Are your sure you want to start an alert for this product (${row.key})?`,
+                  subtitle: "This can cause major consequences",
+                  onConfirm: () => handleSetAlert(row.key),
+                });
+              }}
             >
               <ReportProblem />
             </IconButton>
-          </TableCell>
-        )}
-        <TableCell>
+          )}
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpenDeleteion(true)}
+            onClick={() => {
+              setConfirmDialog({
+                isOpen: true,
+                title: `Are your sure you want to delete this product (${row.key})?`,
+                subtitle: "This action is irreversible",
+                onConfirm: () => handleProductDeletion(row.key),
+              });
+            }}
           >
             <Delete />
           </IconButton>
-        </TableCell>
-        <TableCell>
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpenSetReceiver(true)}
+            onClick={() =>
+              console.log("IMPLEMENT setReceiver stuff, maybe with useDialog?")
+            }
           >
             <ArrowForward />
           </IconButton>
@@ -129,34 +132,39 @@ function Row(props: {
           </Collapse>
         </TableCell>
       </TableRow>
-      <ConfirmDialog
-        title="Are your sure you want to delete this product?"
-        handleClose={() => setOpenDeleteion(false)}
-        handleSubmit={props.handleProductDeletion}
-        open={openDeleteion}
-        param={row.key}
-      />
-      <ConfirmDialog
-        title="Are your sure you want to start an alarm for this product?"
-        handleClose={() => setOpenAlert(false)}
-        handleSubmit={handleSetAlert}
-        open={openAlert}
-        param={row.key}
-      />
-      <SetReceiverDialog
-        handleClose={() => setOpenSetReceiver(false)}
-        handleSubmit={props.handleSetReceiver}
-        open={openSetReceiver}
-        productId={row.key}
-      />
     </React.Fragment>
   );
 }
 
 const ProductStock = () => {
   const [productState, setProductState] = useState<StockItem[]>([]);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogObj>({
+    isOpen: false,
+    title: "",
+    subtitle: "",
+  });
+  const headCells = [
+    { id: "toggle", label: "Text" },
+    { id: "key", label: "Key", enableSorting: true },
+    { id: "productName", label: "Product" },
+    { id: "amount", label: "Amount", enableSorting: true },
+    { id: "unit", label: "Unit" },
+    { id: "actions", label: "Actions" },
+  ];
+  const {
+    TblContainer,
+    searchTerm,
+    setSearchTerm,
+    TblHead,
+    TblPagination,
+    recordsAfterPagingAndSortingAndSearching,
+  } = useTable(productState, headCells, ["productName", "key"]);
 
   useEffect(() => {
+    updateItems();
+  }, []);
+
+  function updateItems() {
     productService.productStock().then((res) => {
       let array: StockItem[] = [];
       res.data.map((element) => {
@@ -164,62 +172,52 @@ const ProductStock = () => {
       });
       setProductState(array);
     });
-    return () => setProductState([]);
-  }, []);
-
-  function handleProductDeletion(id): Promise<AxiosResponse<any>> {
-    const promise = productService.deleteProduct(id);
-    promise.then((res) => {
-      const filteredList: StockItem[] = productState.filter(
-        (item) => id != item.key
-      );
-      setProductState(filteredList);
-    });
-    return promise;
   }
 
-  function handleSetReceiver(
-    id: string,
-    receiver: string
-  ): Promise<AxiosResponse<any>> {
-    const promise = productService.sendProductToOutboxForReceiver(id, receiver);
-    promise.then((res) => {
-      const filteredList: StockItem[] = productState.filter(
-        (item) => id != item.key
-      );
-      setProductState(filteredList);
-    });
-    return promise;
+  function handleProductDeletion(id) {
+    productService.deleteProduct(id).then(updateItems);
+  }
+
+  function handleSetAlert(id) {
+    productService.activateAlarmForProduct(id).then(updateItems);
+  }
+
+  function handleSetReceiver(id: string, receiver: string) {
+    productService
+      .sendProductToOutboxForReceiver(id, receiver)
+      .then(updateItems);
   }
 
   return (
-    <TableContainer>
-      <Table aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Key</TableCell>
-            <TableCell>Product</TableCell>
-            <TableCell>Amount</TableCell>
-            <TableCell>Unit</TableCell>
-          </TableRow>
-        </TableHead>
-        <tbody>
-          {productState.length != 0 ? (
-            productState.map((product: StockItem) => (
+    <>
+      <SearchInputField
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        key="search-input"
+      />
+      <TblContainer>
+        <TblHead />
+        <TableBody>
+          {recordsAfterPagingAndSortingAndSearching().map(
+            (product: StockItem) => (
               <Row
                 key={product.key}
                 row={product}
+                setConfirmDialog={setConfirmDialog}
                 handleProductDeletion={handleProductDeletion}
                 handleSetReceiver={handleSetReceiver}
+                handleSetAlert={handleSetAlert}
               />
-            ))
-          ) : (
-            <tr></tr>
+            )
           )}
-        </tbody>
-      </Table>
-    </TableContainer>
+        </TableBody>
+      </TblContainer>
+      <TblPagination />
+      <ConfirmDialog
+        setConfirmDialog={setConfirmDialog}
+        confirmDialog={confirmDialog}
+      />
+    </>
   );
 };
 

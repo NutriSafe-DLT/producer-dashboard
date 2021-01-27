@@ -1,18 +1,14 @@
+import { Typography } from "@material-ui/core";
 import * as React from "react";
-import MetaInfoService from "../services/metainfo-service";
-import ProductService from "../services/product-service";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import BasicPorductForm from "./basic-product-info-form";
-import {
-  Container,
-  Typography,
-} from "@material-ui/core";
-import DynamicProductInfo from "./dynamic-product-info";
 import { useEffect } from "react";
 import Product from "../../model/product";
-import { map } from "highcharts";
-
+import Controls from "../base/controls/Controls";
+import { Option } from "../base/controls/Option";
+import { useForm } from "../base/useForm";
+import MetaInfoService from "../services/metainfo-service";
+import ProductService from "../services/product-service";
+import BasicProductForm from "./basic-product-info-form";
+import DynamicProductInfo from "./dynamic-product-info";
 
 interface metaDef {
   productNameToAttributesMap: any;
@@ -21,78 +17,105 @@ interface metaDef {
 }
 
 interface IBasicProductInfo {
-  amount?: number;
+  amount?: string;
   unit?: string;
   product?: string;
   id?: string;
   pdc?: string;
-  property?: string;
 }
+const initialBasicValues = {
+  amount: "",
+  unit: "",
+  product: "",
+  id: "",
+  pdc: "",
+};
 
 const AddGoods = () => {
-  const [productsMetdaDefState, setProductsMetaDataState] = React.useState<metaDef>();
-
-  const productList = () => productsMetdaDefState ? Object.keys(productsMetdaDefState.productNameToAttributesMap) : []
-
-  const unitList = () => productsMetdaDefState ? productsMetdaDefState.unitList : [];
-  
-  const [attributeList, setAttributeList] = React.useState<string[]>();
-
+  const [productsMetdaDef, setProductsMetaData] = React.useState<metaDef>();
+  const [unitOptions, setUnitOptions] = React.useState<Option[]>([]);
+  const [productOptions, setProductOptions] = React.useState<Option[]>([]);
+  const [selectedProduct, setSelectedProduct] = React.useState<string>("");
   const [productSpecificJson, setProductSpecificJson] = React.useState({});
 
-  const [basicProductInfo, setBasicProductInfo] = React.useState<IBasicProductInfo>({});
+  const validate = (fieldValues = values) => {
+    let tempErrors = { ...errors };
+    if ("product" in fieldValues) {
+      tempErrors.product = fieldValues.product ? "" : "This field is required.";
+    }
+    if ("unit" in fieldValues) {
+      tempErrors.unit = fieldValues.unit ? "" : "This field is required.";
+    }
+    if ("amount" in fieldValues) {
+      tempErrors.amount = fieldValues.amount ? "" : "This field is required.";
+      tempErrors.amount = /^\d*$/.test(fieldValues.amount)
+        ? ""
+        : "This field must me numeric.";
+    }
+    if ("id" in fieldValues) {
+      tempErrors.id = fieldValues.id ? "" : "This field is required.";
+    }
+    setErrors({
+      ...tempErrors,
+    });
+    return Object.values(tempErrors).every((x) => x == "");
+  };
 
-  const [formSubmitted, setFormSubmitted] = React.useState(false);
+  const {
+    values,
+    setValues,
+    errors,
+    setErrors,
+    handleInputChange,
+    resetForm,
+  } = useForm<IBasicProductInfo>(initialBasicValues, true, validate);
 
   useEffect(() => {
     MetaInfoService.readMetaDef().then((res) => {
-        setProductsMetaDataState(res.data)
-      });
-      return () => setProductSpecificJson({})
-  } 
-  , 
-  []
-  );
-
-  function handleProductChange(e) {
-    let attributes: string[] =
-      productsMetdaDefState.productNameToAttributesMap[e.target.value];
-    setAttributeList(attributes);
-    setProductSpecificJson({});
-    setBasicProductInfo({
-      ...basicProductInfo,
-      product: e.target.value,
+      setProductsMetaData(res.data);
     });
-  }
+    return () => setProductSpecificJson({});
+  }, []);
 
-  function handleUnitChange(e) {
-    setBasicProductInfo({
-      ...basicProductInfo,
-      unit: e.target.value,
-    });
-  }
+  useEffect(() => {
+    // set unit and product options after productMetaDef is loaded
+    if (productsMetdaDef) {
+      const productOptions: Option[] = [];
+      Object.keys(
+        productsMetdaDef.productNameToAttributesMap
+      ).map((productName) =>
+        productOptions.push({ id: productName, title: productName })
+      );
+      setProductOptions(productOptions);
+      const unitOptions: Option[] = [];
+      productsMetdaDef.unitList.map((unit) =>
+        unitOptions.push({ id: unit, title: unit })
+      );
+      setUnitOptions(unitOptions);
+    }
+  }, [productsMetdaDef]);
 
-  function changeHandler(e) {
-    setBasicProductInfo({
-      ...basicProductInfo,
-      [e.target.id]: e.target.value,
-    });
-  }
-
-  function changeHandlerSpecific(e) {
-    setProductSpecificJson({
-      ...productSpecificJson,
-      [e.target.id]: e.target.value,
-    });
-  }
+  useEffect(() => {
+    // create new empty json for product specific info, when selected product changes
+    if (productsMetdaDef && selectedProduct) {
+      let attributes: string[] =
+        productsMetdaDef.productNameToAttributesMap[selectedProduct];
+      let newProductSpecificJson = {};
+      attributes.map(
+        (attr) =>
+          (newProductSpecificJson = { ...newProductSpecificJson, [attr]: "" })
+      );
+      setProductSpecificJson(newProductSpecificJson);
+    }
+  }, [selectedProduct]);
 
   function submit() {
     var result: Product = {
-      amount: basicProductInfo.amount + "",
-      unit: basicProductInfo.unit,
-      product: basicProductInfo.product,
-      id: basicProductInfo.id,
-      pdc: basicProductInfo.pdc,
+      amount: values.amount,
+      unit: values.unit,
+      product: values.product,
+      id: values.id,
+      pdc: values.pdc,
       attributes: [],
       attrValues: [],
     };
@@ -103,58 +126,34 @@ const AddGoods = () => {
         result.attrValues.push(productSpecificJson[key]);
       }
     }
-    console.log(result);
-    clearValues();
-    setFormSubmitted(true);
+    setSelectedProduct("");
+    resetForm();
+    setProductSpecificJson({});
     ProductService.createProduct(result)
-       .then((res) =>{
-         // reset form + success message
-         setFormSubmitted(false);
-       })
-       .catch((err) => {
-         // show error message
-         setFormSubmitted(false);
-       });
-  }
-
-  function clearValues() {
-    for(var property in productSpecificJson)
-      setProductSpecificJson({...productSpecificJson, property: ""})
-    
-    for(var property in basicProductInfo)
-      setBasicProductInfo({...basicProductInfo, property: ""})
+      .then((res) => {})
+      .catch((err) => {});
   }
 
   return (
-    <div>
-      <BasicPorductForm
-        productList={productList()}
-        unitList={unitList()}
-        handleInputChange={changeHandler}
-        handleProductChange={handleProductChange}
-        handleUnitChange={handleUnitChange}
-      ></BasicPorductForm>
-      <Container component="main" maxWidth="xs" style={{ marginTop: "40px" }}>
-        <Typography component="h1" variant="h5">
-          Produkt-spezifische Informationen
-        </Typography>
-      </Container>
-      <Container component="main" maxWidth="xs">
-        <form>
-          <DynamicProductInfo
-            attributeList={attributeList ? attributeList : []}
-            changeHandler={changeHandlerSpecific}
-            values={productSpecificJson}
-          />
-        </form>
-        <Button variant="contained" color="primary" disabled={formSubmitted} onClick={submit} style={{marginTop: "3em"}}>
-          Anlegen
-        </Button>
-      </Container>
-    </div>
+    <>
+      <BasicProductForm
+        productOptions={productOptions}
+        unitOptions={unitOptions}
+        setSelectedProduct={setSelectedProduct}
+        handleInputChange={handleInputChange}
+        values={values}
+        errors={errors}
+      ></BasicProductForm>
+      <Typography component="h1" variant="h5">
+        Product specific Information
+      </Typography>
+      <DynamicProductInfo
+        setValues={setProductSpecificJson}
+        values={productSpecificJson}
+      />
+      <Controls.Button onClick={submit} text="Create" />
+    </>
   );
 };
 
 export default AddGoods;
- 
-//<TextField variant="outlined" margin="normal" id={x} label={x} name={x} />

@@ -10,9 +10,10 @@ import metaDef from "../../model/meta-def";
 
 const MetaInfo = () => {
   const [metaInfoState, setMetaInfoState] = React.useState<metaDef>();
-  const [addProductDefDialogOpen, setAddProductDefDialogOpen] = React.useState<
-    boolean
-  >(false);
+  const [
+    addProductDefDialogOpen,
+    setAddProductDefDialogOpen,
+  ] = React.useState<boolean>(false);
   const [
     addAttributeDefDialogOpen,
     setAddAttributeDefDialogOpen,

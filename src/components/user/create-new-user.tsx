@@ -4,10 +4,10 @@ import { Alert } from "@material-ui/lab";
 import userManagementService from "../services/user-management-service";
 import { useRouter } from "next/router";
 interface CreateUserProps {
-  otherUsernames: string[];
+  existingUsernames: string[];
 }
 
-export const CreateUser = ({ otherUsernames }: CreateUserProps) => {
+export const CreateUser = ({ existingUsernames }: CreateUserProps) => {
   const [newUser, setNewUser] = React.useState({
     username: "",
     password: "",
@@ -17,7 +17,7 @@ export const CreateUser = ({ otherUsernames }: CreateUserProps) => {
   const router = useRouter();
 
   const validateUsername = (username: string) => {
-    if (otherUsernames.includes(username)) {
+    if (existingUsernames.includes(username)) {
       setError("This username is already in use! Choose a different one");
     } else {
       setError("");
@@ -104,7 +104,7 @@ export const CreateUser = ({ otherUsernames }: CreateUserProps) => {
         name="Confirm password"
         label="Confirm Password"
         type="password"
-        id="Confirm password"
+        id="Confirm_password"
         value={newUser.confirmPassword}
         onChange={(e) => {
           setNewUser({ ...newUser, confirmPassword: e.target.value });
