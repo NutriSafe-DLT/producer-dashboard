@@ -21,7 +21,7 @@ export interface ButtonProps {
   size?: "medium" | "large" | "small";
   color?: PropTypes.Color;
   variant?: "text" | "outlined" | "contained";
-  onClick: Promise<any>;
+  onClick: () => Promise<any>;
 }
 
 export default function WaitingButton(props: ButtonProps & ButtonBaseProps) {
