@@ -1,15 +1,14 @@
 import {
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  TextField,
   Typography,
 } from "@material-ui/core";
 import { AxiosResponse } from "axios";
 import React from "react";
+import Controls from "../base/controls/Controls";
 
 export interface SetReceiverDialogProps {
   open: boolean;
@@ -24,8 +23,6 @@ const SetReceiverDialog = ({
   handleSubmit,
   productId,
 }: SetReceiverDialogProps) => {
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(false);
   const [receiver, setReceiver] = React.useState("");
   return (
     <Dialog
@@ -36,42 +33,22 @@ const SetReceiverDialog = ({
     >
       <DialogTitle id="form-dialog-title">Confirm receiver</DialogTitle>
       <DialogContent>
-        {error ? (
-          <Typography style={{ backgroundColor: "lightpink" }}>
-            Something went wrong
-          </Typography>
-        ) : (
-          <div />
-        )}
         <Typography>Please specify the receiver</Typography>
       </DialogContent>
-      <TextField
-        autoFocus
-        variant="filled"
-        id="name"
+      <Controls.Input
+        name="name"
         label="Receiver Name"
-        type="text"
         value={receiver}
-        required
         onChange={(e) => setReceiver(e.target.value)}
       />
       <DialogActions>
-        <Button onClick={() => handleClose()} color="primary">
+        <Button onClick={() => handleClose()} color="secondary">
           Cancel
         </Button>
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={(e) => {
-            handleSubmit(productId, receiver)
-              .catch(() => setError(true))
-              .then(() => setError(false))
-              .finally(() => setLoading(false));
-            setLoading(true);
-          }}
-        >
-          {loading ? <CircularProgress color="primary" size={20} /> : "Confirm"}
-        </Button>
+        <Controls.WaitingButton
+          onClick={() => handleSubmit(productId, receiver)}
+          text="Confirm"
+        />
       </DialogActions>
     </Dialog>
   );

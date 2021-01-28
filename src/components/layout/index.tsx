@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -21,8 +21,7 @@ import AuthService from "../services/user-service";
 import { useRouter } from "next/router";
 import { useStyles, useTheme } from "./styles";
 import CreateIcon from "@material-ui/icons/Create";
-import ComputerIcon from "@material-ui/icons/Computer";
-import ProductService from "../services/product-service";
+import userService from "../services/user-service";
 
 export default function MainLayout(props) {
   const classes = useStyles();
@@ -47,7 +46,13 @@ export default function MainLayout(props) {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar>
+        <Toolbar
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -67,19 +72,22 @@ export default function MainLayout(props) {
           >
             NutriSafe Producer Dashboard
           </Typography>
-          <Button color="inherit" href="/login">
-            Login
-          </Button>
-          <Button
-            color="inherit"
-            href="/login"
-            onClick={() => {
-              AuthService.logout();
-              router.push("/login", undefined, { shallow: false });
-            }}
-          >
-            Logout
-          </Button>
+          {userService.isLoggedIn() ? (
+            <Button
+              color="inherit"
+              href="/login"
+              onClick={() => {
+                AuthService.logout();
+                router.push("/login", undefined, { shallow: false });
+              }}
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button color="inherit" href="/login">
+              Login
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -142,25 +150,35 @@ export default function MainLayout(props) {
         <Divider />
         <List>
           <ListItem>
-            <ListItemText primary="Benutzer" />
+            <ListItemText primary="Access Management" />
           </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <ComputerIcon />
-            </ListItemIcon>
-            <ListItemText primary="Anzeigen" />
-          </ListItem>
-          <ListItem button>
+          <ListItem
+            button
+            onClick={() => {
+              router.push("/users", undefined, { shallow: false });
+            }}
+          >
             <ListItemIcon>
               <CreateIcon />
             </ListItemIcon>
-            <ListItemText primary="Verwalten" />
+            <ListItemText primary="Users" />
+          </ListItem>
+          <ListItem
+            button
+            onClick={() => {
+              router.push("/whitelists", undefined, { shallow: false });
+            }}
+          >
+            <ListItemIcon>
+              <CreateIcon />
+            </ListItemIcon>
+            <ListItemText primary="Whitelists" />
           </ListItem>
         </List>
         <Divider />
         <List>
           <ListItem>
-            <ListItemText primary="Meta information" />
+            <ListItemText primary="Meta Information" />
           </ListItem>
           <ListItem
             button
