@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { useStyles, useTheme } from "./styles";
 import CreateIcon from "@material-ui/icons/Create";
 import userService from "../services/user-service";
+import ConnectionStateIcon from "../base/controls/ConnectionStateIcon";
 
 export default function MainLayout(props) {
   const classes = useStyles();
@@ -72,6 +73,8 @@ export default function MainLayout(props) {
           >
             NutriSafe Producer Dashboard
           </Typography>
+          <div className={classes.grow} />
+          <ConnectionStateIcon isOffline={userService.isInOfflineMode()} />  
           {userService.isLoggedIn() ? (
             <Button
               color="inherit"

@@ -35,17 +35,15 @@ if ( useMockedBackend ) {
 
   var mockJWTToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGhvcml0aWVzIjpbIlJPTEVfQURNSU4iLCJST0xFX01FTUJFUiIsIlJPTEVfVVNFUiJdLCJpYXQiOjE2MTA0Mzk4MTEsImV4cCI6MTYxMDQ0MzQxMX0.LHo2UIlZt3aD-mQ4uQ7xsmD_2sqCzS3zzcxj7GUnY-4";
   var decodedJWTToken = jwt.decode(mockJWTToken, { complete: true }) as any;
-  //TODO: maybe deep copy the damn payload...
-  var newTOken = jwt.sign({
-    payload: {...decodedJWTToken.payload},
-    exp: Math.floor(Date.now() / 1000 + ONE_HOUR_IN_SECONDS)
-  },'secret');
+  //Change the time so that the token is valid and simply sign with secret (validation is not required in offline mode)
+  decodedJWTToken.payload.exp = Math.floor(Date.now() / 1000 + ONE_HOUR_IN_SECONDS);
+  var newTOken = jwt.sign( decodedJWTToken,'secret');
   
   
   mockHelper.onPost("/auth").reply(200,
     {
       "username":"admin",
-      "token": mockJWTToken,
+      "token": newTOken,
       "date": decodedJWTToken.payload.exp
     }
   );
