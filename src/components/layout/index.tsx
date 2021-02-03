@@ -23,12 +23,16 @@ import { useStyles, useTheme } from "./styles";
 import CreateIcon from "@material-ui/icons/Create";
 import userService from "../services/user-service";
 import ConnectionStateIcon from "../base/controls/ConnectionStateIcon";
+import axiosMetricsInstance from "../../prometheusAxios";
 
 export default function MainLayout(props) {
+  const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
   const classes = useStyles();
   const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [time, setTime] = React.useState(new Date().toLocaleTimeString());
+  const [isHyperledgerAvailable, setIsHyperledgerAvailable] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -37,6 +41,26 @@ export default function MainLayout(props) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  //This is a continual check so it triggers every X seconds (see constant) while the app is running
+  useEffect(() => {
+    axiosMetricsInstance.get("/api/v1/query").
+    then((response) => {
+      console.log("Got 2xx response");
+      setIsHyperledgerAvailable(true);
+    }).catch((reason) => {
+      console.log("Endpoint query failed")
+      setIsHyperledgerAvailable(false);
+    });
+  
+    const timeout = setTimeout(() => {
+      setTime(new Date().toLocaleTimeString())
+    }, SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS * 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [time]);
 
   return (
     <div className={classes.root}>
@@ -74,7 +98,7 @@ export default function MainLayout(props) {
             NutriSafe Producer Dashboard
           </Typography>
           <div className={classes.grow} />
-          <ConnectionStateIcon isOffline={userService.isInOfflineMode()} />  
+          <ConnectionStateIcon isOffline={userService.isInOfflineMode() && !isHyperledgerAvailable} />  
           {userService.isLoggedIn() ? (
             <Button
               color="inherit"
