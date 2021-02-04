@@ -45,19 +45,17 @@ export default function MainLayout(props) {
 
   //This is a continual check so it triggers every X seconds (see constant) while the app is running
   useEffect(() => {
-    axiosMetricsInstance.get("/api/v1/query").
+    axiosMetricsInstance.get("/api/v1/query",{params: {query:"fabric_version"}}).
     then((response) => {
-      console.log("Got 2xx response");
       setIsHyperledgerAvailable(true);
     }).catch((reason) => {
-      if (reason.response && reason.response.status !== 500 ) {
+      if (reason.response && reason.response.status ) {
+        //usually 4XX or 5XX errors, but that only means that there is an issue with prometheus, not necessarily with fabric itself
         setIsHyperledgerAvailable(true);
       } else {
-        console.log("Endpoint query failed");
-        setIsHyperledgerAvailable(true);
-      }
-      
-      
+        console.log("Endpoint query failed with status: " + reason);
+        setIsHyperledgerAvailable(false);
+      }  
     });
   
     const timeout = setTimeout(() => {
