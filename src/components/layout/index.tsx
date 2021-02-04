@@ -24,6 +24,7 @@ import CreateIcon from "@material-ui/icons/Create";
 import userService from "../services/user-service";
 import ConnectionStateIcon from "../base/controls/ConnectionStateIcon";
 import axiosMetricsInstance from "../../prometheusAxios";
+import { resolveNaptr } from "dns";
 
 export default function MainLayout(props) {
   const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
@@ -49,8 +50,14 @@ export default function MainLayout(props) {
       console.log("Got 2xx response");
       setIsHyperledgerAvailable(true);
     }).catch((reason) => {
-      console.log("Endpoint query failed")
-      setIsHyperledgerAvailable(false);
+      if (reason.response && reason.response.status !== 500 ) {
+        setIsHyperledgerAvailable(true);
+      } else {
+        console.log("Endpoint query failed");
+        setIsHyperledgerAvailable(true);
+      }
+      
+      
     });
   
     const timeout = setTimeout(() => {
