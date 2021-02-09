@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme: Theme) =>
     hide: {
       display: "none",
     },
+    grow: {
+      flexGrow: 1,
+    },
     drawer: {
       width: drawerWidth,
       flexShrink: 0,
