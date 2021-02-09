@@ -1,6 +1,7 @@
 import instance from "../../axios";
 import * as jwt from "jsonwebtoken";
 
+
 class AuthService {
   login(username, password) {
     return instance
@@ -36,6 +37,10 @@ class AuthService {
     }
   }
 
+  isInOfflineMode(): boolean {
+     return process.env.NEXT_PUBLIC_USE_MOCKED_BACKEND === "TRUE" ? true : false;
+  }
+  
   hasRole(role: string): boolean {
     if (typeof window === "object") {
       const encodedJWT = localStorage.getItem("JWT");

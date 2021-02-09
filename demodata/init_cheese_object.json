@@ -1,4 +1,4 @@
 {
     "product":"cheese",
-    "attributes":["Quality","barcode","lotid","bestbeforedate","state"]
+    "attributes":["Quality","barcode","lotid","bestbeforedate","state","Documents"]
 }
