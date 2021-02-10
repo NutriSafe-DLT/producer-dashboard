@@ -126,10 +126,10 @@
           become: yes
           become_user: deploy
           docker_container:
-            name: brangusdashboard
-            hostname: brangusdashboard
+            name: deoni-dashboard
             image: ghcr.io/codingsincethe80s/producerdashboard:dev-latest
             state: started
+            recreate: yes
             container_default_behavior: compatibility
             env_file: /home/deploy/containerenv.prod
             networks:
