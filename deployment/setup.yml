@@ -115,7 +115,7 @@
             mode: '0770'
             owner: deploy
 
-        - name: "Login to DockerHub"
+        - name: "Login to GitHub GHCR repository"
           become: yes
           become_user: deploy
           command: "docker login ghcr.io -u {{ ghcr_user }} --password-stdin"
