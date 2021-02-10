@@ -130,6 +130,7 @@
             hostname: brangusdashboard
             image: ghcr.io/codingsincethe80s/producerdashboard:dev-latest
             state: started
+            container_default_behavior: compatibility
             env_file: /home/deploy/containerenv.prod
             networks:
                 - name: deoni 
