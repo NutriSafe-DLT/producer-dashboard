@@ -1,0 +1,138 @@
+---
+    - hosts: all
+      become: yes
+      become_user: root
+      tasks:
+        - include_vars: vaultedvars.yml
+        # Most of the initial tasks follow the instructions here: https://docs.docker.com/engine/install/ubuntu/
+        # for install Docker Engine on Ubuntu.
+    
+        # Packages needs to use HTTPS apt repos
+        - name: Prepare to add Docker apt repo
+          apt:
+            name:
+              - apt-transport-https
+              - ca-certificates
+              - curl
+              - gnupg-agent
+              - software-properties-common
+    
+        - name: Add Docker repo key
+          apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+            state: present
+    
+        # If you're using apt on Ubuntu, change focal for your machine's actual codename
+        # If you're not using apt at all, you'll have to change the next steps to install
+        # Docker using a different method.
+        - name: Add Docker apt repo
+          apt_repository:
+            repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+            state: present
+    
+        - name: Install deployment dependencies (apt)
+          apt:
+            update_cache: yes
+            allow_unauthenticated: yes
+            name:
+              - python3-pip
+              - xz-utils
+              # Allows Ansible to become an unprivileged user
+              # https://github.com/georchestra/ansible/issues/55#issuecomment-588313638
+              - acl
+        - name: Install docker library dependency (pip)
+          pip:
+            name: docker
+    
+        - name: Create unprivileged user for deploying and running services
+          user:
+            name: deploy
+            shell: /bin/bash
+            groups:
+              # Allow deploy to run Docker and Docker Compose
+              - docker
+    
+        - name: Create SSH directory for the deploy user
+          file:
+            path: /home/deploy/.ssh
+            state: directory
+            mode: 0700
+            owner: deploy
+        
+        - name: Create SSHD config subdirectory
+          file:
+            path: /etc/ssh/sshd_config.d
+            state: directory  
+    
+        # Don't allow the deploy user to set their authorized keys! Otherwise, it can escape from
+        # its one-command jail.
+        - name: Configure SSHD to read authorized keys from /etc/ssh/authorized_keys/<user>
+          copy:
+            src: ./authorized_keys_file.conf
+            dest: /etc/ssh/sshd_config.d/authorized_keys_file.conf
+    
+        # For each service (app), generate an SSH key pair used for cloning git repos
+        # and deploying over SSH
+        #- name: Create deploy key for each app
+        #  command: "ssh-keygen -o -a 100 -t ed25519 -f /home/deploy/.ssh/{{ item }}.id_ed25519 -N ''"
+        #  become: yes
+        #  become_user: deploy
+        #  args:
+        #    creates: "/home/deploy/.ssh/{{ item }}.id_ed25519"
+        #  loop: "{{ apps }}"
+    
+        # Update SSH authorized keys to allow the deploy user to run the deploy script
+        # over SSH for each service (called deploy-<service>.sh).
+        # See ./update-authorized-keys.sh
+        #- name: Allow deploy user to deploy things
+        #  script: "./update-authorized-keys.sh {{ apps|join(' ') }}"
+    
+        #- name: Copy general deploy script
+        #  copy:
+        #    src: ./deploy.sh
+        #    dest: /home/deploy
+        #    mode: '0770'
+        #    owner: deploy
+    
+        #- name: Copy app-specific deploy scripts
+        #  template:
+        #    src: ./deploy-app.sh.j2
+        #    dest: /home/deploy/deploy-{{ item }}.sh
+        #    mode: '0770'
+        #    owner: deploy
+        #  loop: "{{ apps }}"
+    
+        # Configure deploy's SSH to use the deploy keys generated earlier when cloning/pulling git repos.
+        # When cloning/pulling/etc the <app> repo, we'll use <app>.github.com, so that way, we can
+        # use the app-specific deploy keys transparently using deploy's SSH config. Just have to clone
+        # from <app>.github.com instead of github.com. See ./deploy-ssh-config.j2 template.
+
+        - name: Copy environment vars config file
+          copy:
+            src: ./containerenv.prod
+            dest: /home/deploy
+            mode: '0770'
+            owner: deploy
+
+        - name: "Login to GitHub GHCR repository"
+          become: yes
+          become_user: deploy
+          command: "docker login ghcr.io -u {{ ghcr_user }} --password-stdin"
+          args:
+            stdin: "{{ ghcr_password }}"
+        
+        - name: "Deploy dashboard container"
+          become: yes
+          become_user: deploy
+          docker_container:
+            name: deoni-dashboard
+            image: ghcr.io/codingsincethe80s/producerdashboard:dev-latest
+            state: started
+            recreate: yes
+            container_default_behavior: compatibility
+            env_file: /home/deploy/containerenv.prod
+            networks:
+                - name: deoni 
+            ports:
+                - 80:3000
