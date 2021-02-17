@@ -31,7 +31,7 @@ class AuthService {
     if (typeof window === "object") {
       const encodedJWT = localStorage.getItem("JWT");
       if (!encodedJWT) return false;
-      const decodedJWT = jwt.decode(encodedJWT, { complete: true });
+      const decodedJWT = jwt.decode(encodedJWT, { complete: true }) as any;
       if (decodedJWT.payload.exp < Date.now() / 1000) return false;
       return true;
     }
@@ -45,7 +45,7 @@ class AuthService {
     if (typeof window === "object") {
       const encodedJWT = localStorage.getItem("JWT");
       if (!encodedJWT) return false;
-      const decodedJWT = jwt.decode(encodedJWT, { complete: true });
+      const decodedJWT = jwt.decode(encodedJWT, { complete: true }) as any;
       return decodedJWT.payload.authorities.includes(role);
     } else return false;
   }
