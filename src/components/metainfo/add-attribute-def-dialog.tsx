@@ -4,6 +4,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { AxiosResponse } from "axios";
 import React from "react";
+import { AttributeDefinition } from "../../model";
 import Controls from "../base/controls/Controls";
 import { useForm } from "../base/useForm";
 
@@ -11,14 +12,8 @@ export interface AddAttributeDefProps {
   open: boolean;
   handleClose: Function;
   handleSubmit: (
-    attributeName: string,
-    attributeType: string
+    attributeDefinition: AttributeDefinition
   ) => Promise<AxiosResponse>;
-}
-
-interface AttributeDefinition {
-  attributeName: string;
-  attributeType: string;
 }
 
 const initialValues: AttributeDefinition = {
@@ -85,7 +80,12 @@ export default function AddAttributeDefDialog({
         />
         <Controls.WaitingButton
           onClick={() =>
-            handleSubmit(values.attributeName, values.attributeType)
+            handleSubmit(
+              new AttributeDefinition(
+                values.attributeName,
+                values.attributeType
+              )
+            )
           }
           text="Create"
         />

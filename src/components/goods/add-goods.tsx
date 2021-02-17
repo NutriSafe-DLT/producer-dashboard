@@ -1,7 +1,7 @@
 import { Typography } from "@material-ui/core";
 import * as React from "react";
 import { useEffect } from "react";
-import Product from "../../model/product";
+import { Product } from "../../model";
 import Controls from "../base/controls/Controls";
 import { Option } from "../base/controls/Option";
 import { useForm } from "../base/useForm";
