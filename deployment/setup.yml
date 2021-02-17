@@ -127,7 +127,7 @@
           become_user: deploy
           docker_container:
             name: deoni-dashboard
-            image: docker.pkg.github.com/nutrisafe-dlt/producer-dashboard/image:latest
+            image: docker.pkg.github.com/nutrisafe-dlt/producer-dashboard/producerdashboard:merge
             state: started
             recreate: yes
             auto_remove: yes
