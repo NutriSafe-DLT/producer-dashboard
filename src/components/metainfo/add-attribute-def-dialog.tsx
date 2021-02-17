@@ -5,6 +5,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { AxiosResponse } from "axios";
 import React from "react";
 import Controls from "../base/controls/Controls";
+import { useForm } from "../base/useForm";
 
 export interface AddAttributeDefProps {
   open: boolean;
@@ -15,43 +16,77 @@ export interface AddAttributeDefProps {
   ) => Promise<AxiosResponse>;
 }
 
+interface AttributeDefinition {
+  attributeName: string;
+  attributeType: string;
+}
+
+const initialValues: AttributeDefinition = {
+  attributeName: "",
+  attributeType: "",
+};
+
 export default function AddAttributeDefDialog({
   open,
   handleClose,
   handleSubmit,
 }: AddAttributeDefProps) {
-  const [attributeName, setAttributeName] = React.useState("");
-  const [attributeType, setAttributeType] = React.useState("");
+  const validate = (fieldValues = values) => {
+    let tempErrors = { ...errors };
+    if ("attributeName" in fieldValues) {
+      tempErrors.attributeName = fieldValues.attributeName
+        ? ""
+        : "This field is required.";
+    }
+    if ("attributeType" in fieldValues) {
+      tempErrors.attributeType = fieldValues.attributeType
+        ? ""
+        : "This field is required.";
+    }
+    setErrors({
+      ...tempErrors,
+    });
+
+    return Object.values(tempErrors).every((x) => x == "");
+  };
+  const { values, errors, setErrors, handleInputChange, resetForm } = useForm(
+    initialValues,
+    true,
+    validate
+  );
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => handleClose()}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+    <Dialog open={open} onClose={() => handleClose()}>
+      <DialogTitle>Create new attribute definition</DialogTitle>
       <DialogContent>
         <Controls.Input
           name="name"
           label="Attribute Name"
-          value={attributeName}
-          onChange={(e) => setAttributeName(e.target.value)}
+          value={values.attributeName}
+          onChange={handleInputChange}
+          error={errors.attributeName}
         />
         <Controls.Input
           name="type"
           label="Attribute Type"
-          value={attributeType}
-          onChange={(e) => setAttributeType(e.target.value)}
+          value={values.attributeType}
+          onChange={handleInputChange}
+          error={errors.attributeType}
         />
       </DialogContent>
       <DialogActions>
         <Controls.Button
-          onClick={() => handleClose()}
+          onClick={() => {
+            resetForm();
+            handleClose();
+          }}
           color="secondary"
           text="Cancel"
         />
         <Controls.WaitingButton
-          onClick={() => handleSubmit(attributeName, attributeType)}
+          onClick={() =>
+            handleSubmit(values.attributeName, values.attributeType)
+          }
           text="Create"
         />
       </DialogActions>
