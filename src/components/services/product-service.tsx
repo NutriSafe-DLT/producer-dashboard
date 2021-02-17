@@ -1,6 +1,6 @@
 import instance from "../../axios";
 import authHeader from "./auth-header";
-import Product from "../../model/product";
+import { Product } from "../../model";
 import { AxiosResponse } from "axios";
 
 class ProductService {

@@ -25,6 +25,21 @@ export class ProductDefinition {
 }
 
 export class AttributeDefinition {
+  constructor(attributeName: string, attributeType: string) {
+    this.attributeName = attributeName;
+    this.attributeType = attributeType;
+  }
   attributeName: string;
   attributeType: string;
+}
+
+export class Product {
+  id: string;
+  pdc?: string;
+  product: string;
+  amount: string;
+  unit: string;
+  attributes: string[];
+  attrValues: string[];
+  pArgs?: {};
 }

@@ -37,15 +37,15 @@ export const WhitelistDetails = ({
     setFunctionNames(whitelistAPIFunctions);
   }, []);
 
-  function handleRemoveFuncFromWhitelist(
-    func: string
+  function handleRemoveFunctionFromWhitelist(
+    functionName: string
   ): Promise<AxiosResponse<any>> {
     const promise = userManagementService.unlinkFunctionFromWhitelist({
       whitelistName: whitelistName,
-      func,
+      functionName,
     });
     promise.then(() => {
-      const filteredList = functionNames.filter((f) => f != func);
+      const filteredList = functionNames.filter((f) => f != functionName);
       setFunctionNames(filteredList);
     });
     return promise;
@@ -95,7 +95,7 @@ export const WhitelistDetails = ({
                         title: `Are your sure you want to remove ${functionName}?`,
                         subtitle: "",
                         onConfirm: () =>
-                          handleRemoveFuncFromWhitelist(functionName),
+                          handleRemoveFunctionFromWhitelist(functionName),
                       });
                     }}
                   >

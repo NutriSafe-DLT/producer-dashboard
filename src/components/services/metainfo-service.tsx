@@ -1,13 +1,14 @@
+import { AxiosResponse } from "axios";
 import instance from "../../axios";
 import {
   AttributeDefinition,
   MetaDefinition,
   ProductDefinition,
-} from "../../model/meta-def";
+} from "../../model";
 import authHeader from "./auth-header";
 
 class MetaInfoService {
-  readMetaDef(): Promise<MetaDefinition> {
+  readMetaDef(): Promise<AxiosResponse<MetaDefinition>> {
     return instance.get("/get?function=META_readMetaDef", {
       headers: authHeader(),
     });

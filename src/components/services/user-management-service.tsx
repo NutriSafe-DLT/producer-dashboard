@@ -62,7 +62,6 @@ class UserManagementService {
     );
   }
 
-  // function is a keyword in Typescript, so func is used
   linkFunctionToWhitelist({ whitelistName, functionName }) {
     return instance.post(
       "/submit?function=linkFunctionToWhitelist",
