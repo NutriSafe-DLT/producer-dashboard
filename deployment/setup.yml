@@ -130,6 +130,8 @@
             image: docker.pkg.github.com/nutrisafe-dlt/producer-dashboard/image:latest
             state: started
             recreate: yes
+            auto_remove: yes
+            pull: yes
             container_default_behavior: compatibility
             env_file: /home/deploy/containerenv.prod
             networks:
