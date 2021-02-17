@@ -17,23 +17,23 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import OutboxIcon from "@material-ui/icons/Mail";
-import AuthService from "../services/user-service";
-import { useRouter } from "next/router";
 import { useStyles, useTheme } from "./styles";
 import CreateIcon from "@material-ui/icons/Create";
 import userService from "../services/user-service";
 import ConnectionStateIcon from "../base/controls/ConnectionStateIcon";
 import axiosMetricsInstance from "../../prometheusAxios";
-import { resolveNaptr } from "dns";
+import Link from "next/link";
+import Controls from "../base/controls/Controls";
 
 export default function MainLayout(props) {
   const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
   const classes = useStyles();
-  const router = useRouter();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [time, setTime] = React.useState(new Date().toLocaleTimeString());
-  const [isHyperledgerAvailable, setIsHyperledgerAvailable] = React.useState(false);
+  const [isHyperledgerAvailable, setIsHyperledgerAvailable] = React.useState(
+    false
+  );
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -45,26 +45,28 @@ export default function MainLayout(props) {
 
   //This is a continual check so it triggers every X seconds (see constant) while the app is running
   useEffect(() => {
-    axiosMetricsInstance.get("/api/v1/query",{params: {query:"fabric_version"}}).
-    then((response) => {
-      setIsHyperledgerAvailable(true);
-    }).catch((reason) => {
-      if (reason.response && reason.response.status ) {
-        //usually 4XX or 5XX errors, but that only means that there is an issue with prometheus, not necessarily with fabric itself
+    axiosMetricsInstance
+      .get("/api/v1/query", { params: { query: "fabric_version" } })
+      .then((response) => {
         setIsHyperledgerAvailable(true);
-      } else {
-        console.log("Endpoint query failed with status: " + reason);
-        setIsHyperledgerAvailable(false);
-      }  
-    });
-  
+      })
+      .catch((reason) => {
+        if (reason.response && reason.response.status) {
+          //usually 4XX or 5XX errors, but that only means that there is an issue with prometheus, not necessarily with fabric itself
+          setIsHyperledgerAvailable(true);
+        } else {
+          console.log("Endpoint query failed with status: " + reason);
+          setIsHyperledgerAvailable(false);
+        }
+      });
+
     const timeout = setTimeout(() => {
-      setTime(new Date().toLocaleTimeString())
+      setTime(new Date().toLocaleTimeString());
     }, SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS * 1000);
 
     return () => {
       clearTimeout(timeout);
-    }
+    };
   }, [time]);
 
   return (
@@ -94,31 +96,26 @@ export default function MainLayout(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            onClick={() => router.push("/", undefined, { shallow: false })}
-            style={{ cursor: "pointer" }}
-          >
-            NutriSafe Producer Dashboard
-          </Typography>
+          <Link href="/" passHref>
+            <Typography variant="h6" noWrap>
+              NutriSafe Producer Dashboard
+            </Typography>
+          </Link>
           <div className={classes.grow} />
-          <ConnectionStateIcon isOffline={userService.isInOfflineMode() && !isHyperledgerAvailable} />  
+          <ConnectionStateIcon
+            isOffline={userService.isInOfflineMode() && !isHyperledgerAvailable}
+          />
           {userService.isLoggedIn() ? (
-            <Button
-              color="inherit"
-              href="/login"
-              onClick={() => {
-                AuthService.logout();
-                router.push("/login", undefined, { shallow: false });
-              }}
-            >
-              Logout
-            </Button>
+            <Link href="/login" passHref>
+              <Controls.Button
+                text="Logout"
+                onClick={() => userService.logout()}
+              />
+            </Link>
           ) : (
-            <Button color="inherit" href="/login">
-              Login
-            </Button>
+            <Link href="/login" passHref>
+              <Controls.Button text="Login" />
+            </Link>
           )}
         </Toolbar>
       </AppBar>
@@ -145,84 +142,74 @@ export default function MainLayout(props) {
           <ListItem>
             <ListItemText primary="Goods" />
           </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              router.push("/products/inbox", undefined, { shallow: false });
-            }}
-          >
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Inbox" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              router.push("/products/stock", undefined, { shallow: false });
-            }}
-          >
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Stock" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              router.push("/products/outbox", undefined, { shallow: false });
-            }}
-          >
-            <ListItemIcon>
-              <OutboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Outbox" />
-          </ListItem>
+          <Link href="/add-goods" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Create Product" />
+            </ListItem>
+          </Link>
+          <Link href="/products/inbox" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Inbox" />
+            </ListItem>
+          </Link>
+          <Link href="/products/stock" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Stock" />
+            </ListItem>
+          </Link>
+          <Link href="/products/outbox" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <OutboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Outbox" />
+            </ListItem>
+          </Link>
         </List>
         <Divider />
         <List>
           <ListItem>
             <ListItemText primary="Access Management" />
           </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              router.push("/users", undefined, { shallow: false });
-            }}
-          >
-            <ListItemIcon>
-              <CreateIcon />
-            </ListItemIcon>
-            <ListItemText primary="Users" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              router.push("/whitelists", undefined, { shallow: false });
-            }}
-          >
-            <ListItemIcon>
-              <CreateIcon />
-            </ListItemIcon>
-            <ListItemText primary="Whitelists" />
-          </ListItem>
+          <Link href="/users" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <CreateIcon />
+              </ListItemIcon>
+              <ListItemText primary="Users" />
+            </ListItem>
+          </Link>
+          <Link href="/whitelists" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <CreateIcon />
+              </ListItemIcon>
+              <ListItemText primary="Whitelists" />
+            </ListItem>
+          </Link>
         </List>
         <Divider />
         <List>
           <ListItem>
             <ListItemText primary="Meta Information" />
           </ListItem>
-          <ListItem
-            button
-            onClick={() => {
-              router.push("/meta-info", undefined, { shallow: false });
-            }}
-          >
-            <ListItemIcon>
-              <CreateIcon />
-            </ListItemIcon>
-            <ListItemText primary="Manage" />
-          </ListItem>
+          <Link href="/meta-info" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <CreateIcon />
+              </ListItemIcon>
+              <ListItemText primary="Manage" />
+            </ListItem>
+          </Link>
         </List>
       </Drawer>
       <main
