@@ -1,6 +1,7 @@
 import instance from "../../axios";
 import authHeader from "./auth-header";
 import Product from "../../model/product";
+import { AxiosResponse } from "axios";
 
 class ProductService {
   private companyName: string = process.env.NEXT_PUBLIC_COMPANY_NAME;
@@ -11,7 +12,9 @@ class ProductService {
     });
   }
 
-  productsInbox() {
+  // should be changed by the backend at some point
+  // to return JSON, not String
+  productsInbox(): Promise<AxiosResponse<string>> {
     return instance.post(
       "/select?function=selectChaincode",
       {
@@ -25,7 +28,7 @@ class ProductService {
     );
   }
 
-  productsOutbox() {
+  productsOutbox(): Promise<AxiosResponse<string>> {
     return instance.post(
       "/select?function=selectChaincode",
       {
@@ -42,7 +45,7 @@ class ProductService {
     );
   }
 
-  productStock() {
+  productStock(): Promise<AxiosResponse<string>> {
     return instance.post(
       "/select?function=selectChaincode",
       {
@@ -59,44 +62,44 @@ class ProductService {
     );
   }
 
-  acceptProductFromInbox(id: string) {
+  acceptProductFromInbox(productId: string) {
     return instance.post(
       "/submit?function=changeOwner",
-      { id },
+      { id: productId },
       {
         headers: authHeader(),
       }
     );
   }
 
-  sendProductToOutboxForReceiver(id: string, receiver: string) {
+  sendProductToOutboxForReceiver(productId: string, receiver: string) {
     return instance.post(
       "/submit?function=setReceiver",
-      { id, receiver },
+      { id: productId, receiver },
       {
         headers: authHeader(),
       }
     );
   }
 
-  withdrawProductFromOutbox(id: string) {
-    return this.sendProductToOutboxForReceiver(id, "");
+  withdrawProductFromOutbox(productId: string) {
+    return this.sendProductToOutboxForReceiver(productId, "");
   }
 
-  activateAlarmForProduct(id: string) {
+  activateAlarmForProduct(productId: string) {
     return instance.post(
       "/submit?function=activateAlarm",
-      { id },
+      { id: productId },
       {
         headers: authHeader(),
       }
     );
   }
 
-  deleteProduct(id: string) {
+  deleteProduct(productId: string) {
     return instance.post(
       "/submit?function=deleteObject",
-      { id },
+      { id: productId },
       {
         headers: authHeader(),
       }

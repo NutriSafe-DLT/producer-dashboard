@@ -1,44 +1,36 @@
 import instance from "../../axios";
+import {
+  AttributeDefinition,
+  MetaDefinition,
+  ProductDefinition,
+} from "../../model/meta-def";
 import authHeader from "./auth-header";
 
 class MetaInfoService {
-  readMetaDef() {
+  readMetaDef(): Promise<MetaDefinition> {
     return instance.get("/get?function=META_readMetaDef", {
       headers: authHeader(),
     });
-    // return {
-    //   productNameToAttributesMap: {
-    //     milk: ["Quality", "Protein"],
-    //     cheese: ["Quality", "Protein", "Type"],
-    //     someOtherProduct: ["New_Attribute", "And_anotherone"],
-    //   },
-    //   unitList: ["Liters"],
-    //   attributeToDataTypeMap: {
-    //     Quality: "Integer",
-    //     Protein: "Integer",
-    //     Type: "String",
-    //   },
-    // };
   }
 
-  createProductDef(productName: string, attributeList: string[]) {
+  createProductDef(productDefinition: ProductDefinition) {
     return instance.post(
       "/submit?function=META_addProductDefinition",
       {
-        product: productName,
-        attributes: attributeList,
+        product: productDefinition.productName,
+        attributes: productDefinition.attributeList,
       },
       {
         headers: authHeader(),
       }
     );
   }
-  createAttributeDef(attributeName: string, attributeType: string) {
+  createAttributeDef(attributeDefinition: AttributeDefinition) {
     return instance.post(
       "/submit?function=META_addAttributeDefinition",
       {
-        attribute: attributeName,
-        attrValue: attributeType,
+        attribute: attributeDefinition.attributeName,
+        attrValue: attributeDefinition.attributeType,
       },
       {
         headers: authHeader(),
