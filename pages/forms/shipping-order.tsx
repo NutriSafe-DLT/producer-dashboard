@@ -229,14 +229,19 @@ const ShippingOrderForm = () => {
             error={errors.specialRemarks}
           />
         </Grid>
-        <Grid item xs={2}>
-          <Controls.Input
-            label="Value of goods"
-            name="valueOfGoodsInEuro"
-            onChange={handleInputChange}
-            value={values.valueOfGoodsInEuro}
-            error={errors.valueOfGoodsInEuro}
-          />
+        <Grid item container xs={2}>
+          <Grid item xs={12}>
+            <Typography variant="h6">Value of the goods in €</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Controls.Input
+              label="Value of goods"
+              name="valueOfGoodsInEuro"
+              onChange={handleInputChange}
+              value={values.valueOfGoodsInEuro}
+              error={errors.valueOfGoodsInEuro}
+            />
+          </Grid>
         </Grid>
         <Grid item container xs={4}>
           <Grid item xs={12}>
