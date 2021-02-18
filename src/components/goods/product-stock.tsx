@@ -165,7 +165,7 @@ const ProductStock = () => {
   }, []);
 
   function updateItems() {
-    productService.productStock().then((res) => {
+    productService.productStock().then((res:any) => {
       let array: StockItem[] = [];
       res.data.map((element) => {
         array.push(JSON.parse(element));

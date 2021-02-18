@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:14.15.5-alpine
 
 WORKDIR /producer-dashboard
 # Install app dependencies
@@ -7,7 +7,7 @@ COPY ["package.json", "package-lock.json*", "./"]
 
 # RUN rm -rf node_modules
 RUN rm -rf .next && rm package-lock.json
-RUN apt-get update && apt install git -y && git --version && npm install --silent
+RUN npm install --silent
 # We need to build the dashboard itself so if there are any errors the docker image publishing will fail
 RUN npm run build
 RUN chmod u+x ./start.sh
