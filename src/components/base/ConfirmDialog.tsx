@@ -53,7 +53,7 @@ export default function ConfirmDialog(props: ConfirmDialogProps) {
         <Controls.Button
           text="Yes"
           color="secondary"
-          onClick={confirmDialog.onConfirm}
+          onClick={ () => {confirmDialog.onConfirm(); setConfirmDialog({ ...confirmDialog, isOpen: false })}}
         />
       </DialogActions>
     </Dialog>
