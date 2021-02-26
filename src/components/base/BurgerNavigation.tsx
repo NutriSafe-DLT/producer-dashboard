@@ -85,5 +85,20 @@ return(
               <ListItemText primary="Manage" />
             </ListItem>
           </Link>
-        </List></>);
+        </List>
+        <Divider />
+        <List>
+          <ListItem>
+            <ListItemText primary="Logistics" />
+          </ListItem>
+          <Link href="/add-order" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <CreateIcon />
+              </ListItemIcon>
+              <ListItemText primary="Shipping order form" />
+            </ListItem>
+          </Link>
+        </List>
+        </>);
         }
