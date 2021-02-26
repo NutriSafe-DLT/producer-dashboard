@@ -3,8 +3,8 @@ import MainLayout from "../src/components/layout/index";
 import AddGoods from "../src/components/goods/add-goods";
 import Head from "next/head";
 
-export default function Index() {
-  return ( 
+export default function GoodsIndexPage() {
+  return (
     <MainLayout>
       <Head>
         <title>Nutrisafe: Add product</title>

@@ -3,27 +3,20 @@ import clsx from "clsx";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import OutboxIcon from "@material-ui/icons/Mail";
 import { useStyles, useTheme } from "./styles";
-import CreateIcon from "@material-ui/icons/Create";
 import userService from "../services/user-service";
 import ConnectionStateIcon from "../base/controls/ConnectionStateIcon";
 import axiosMetricsInstance from "../../prometheusAxios";
 import Link from "next/link";
 import Controls from "../base/controls/Controls";
+import BurgerNavigation from "../base/BurgerNavigation";
 
 export default function MainLayout(props) {
   const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
@@ -47,7 +40,7 @@ export default function MainLayout(props) {
   useEffect(() => {
     axiosMetricsInstance
       .get("/api/v1/query", { params: { query: "fabric_version" } })
-      .then((response) => {
+      .then(() => {
         setIsHyperledgerAvailable(true);
       })
       .catch((reason) => {
@@ -138,79 +131,7 @@ export default function MainLayout(props) {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          <ListItem>
-            <ListItemText primary="Goods" />
-          </ListItem>
-          <Link href="/add-goods" passHref>
-            <ListItem button component="a">
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Create Product" />
-            </ListItem>
-          </Link>
-          <Link href="/products/inbox" passHref>
-            <ListItem button component="a">
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Inbox" />
-            </ListItem>
-          </Link>
-          <Link href="/products/stock" passHref>
-            <ListItem button component="a">
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Stock" />
-            </ListItem>
-          </Link>
-          <Link href="/products/outbox" passHref>
-            <ListItem button component="a">
-              <ListItemIcon>
-                <OutboxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Outbox" />
-            </ListItem>
-          </Link>
-        </List>
-        <Divider />
-        <List>
-          <ListItem>
-            <ListItemText primary="Access Management" />
-          </ListItem>
-          <Link href="/users" passHref>
-            <ListItem button component="a">
-              <ListItemIcon>
-                <CreateIcon />
-              </ListItemIcon>
-              <ListItemText primary="Users" />
-            </ListItem>
-          </Link>
-          <Link href="/whitelists" passHref>
-            <ListItem button component="a">
-              <ListItemIcon>
-                <CreateIcon />
-              </ListItemIcon>
-              <ListItemText primary="Whitelists" />
-            </ListItem>
-          </Link>
-        </List>
-        <Divider />
-        <List>
-          <ListItem>
-            <ListItemText primary="Meta Information" />
-          </ListItem>
-          <Link href="/meta-info" passHref>
-            <ListItem button component="a">
-              <ListItemIcon>
-                <CreateIcon />
-              </ListItemIcon>
-              <ListItemText primary="Manage" />
-            </ListItem>
-          </Link>
-        </List>
+        <BurgerNavigation/>
       </Drawer>
       <main
         className={clsx(classes.content, {

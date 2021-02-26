@@ -7,9 +7,9 @@ export default function AddOrder() {
     return (
         <MainLayout>
             <WithAuthorization requiredRole="ROLE_ADMIN">
-                <ShippingOrderForm/>
+                <ShippingOrderForm />
             </WithAuthorization>
         </MainLayout>
-);
+    );
 
 }
