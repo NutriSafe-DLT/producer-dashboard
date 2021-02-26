@@ -27,9 +27,16 @@ export const CreateUser = ({ existingUsernames }: CreateUserProps) => {
     if ("username" in fieldValues) {
       if (fieldValues.username === "")
         tempErrors.username = "This field is required.";
-      if (existingUsernames.includes(values.username))
-        tempErrors.userName =
+      //Using map to get exact check because Array.includes does NOT check for exact matches but uses beginswith-logic
+      var matchArray = existingUsernames.map((item) => {
+        return item === fieldValues.username;
+      });
+      if (matchArray.includes(true)) {
+        tempErrors.username =
           "This username is already in use. Choose a different one";
+        } else {
+          tempErrors.username = "";
+        }
     }
     if ("password" in fieldValues) {
       if (fieldValues.password === "")
@@ -37,8 +44,11 @@ export const CreateUser = ({ existingUsernames }: CreateUserProps) => {
       // if doesnt match password guidelines, error
     }
     if ("confirmPassword" in fieldValues) {
-      if (fieldValues.confirmPassword !== values.password)
+      if (fieldValues.confirmPassword !== values.password) {
         tempErrors.confirmPassword = "Please repeat the password correctly";
+      } else {
+        tempErrors.confirmPassword = "";
+      }
     }
     setErrors({
       ...tempErrors,
