@@ -28,8 +28,12 @@ const ProductOutbox = () => {
   }, []);
 
   function updateItems() {
-    productService.productsOutbox().then((res) => {
-      if (res.data.length > 0) setProductState([JSON.parse(res.data)]);
+    productService.productsOutbox().then((res:any) => {
+      let array: OutboxItem[] = [];
+      res.data.map((element) => {
+        array.push(JSON.parse(element));
+      });
+      setProductState(array);
     });
   }
 
