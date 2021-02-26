@@ -21,6 +21,7 @@ import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
 import productService from "../services/product-service";
 import RequestInputDialog, { RequestInputObj } from "../base/RequestInputDialog";
+import Head from "next/head";
 
 interface StockItem {
   alarmFlag: boolean;
@@ -57,7 +58,7 @@ function Row(props: ProductStockRowProps) {
         style={{
           backgroundColor: row.alarmFlag ? "lightpink" : undefined,
         }}
-        key={row.key}
+        key={props.row.key}
       >
         <TableCell>
           <IconButton
