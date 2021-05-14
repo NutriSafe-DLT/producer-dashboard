@@ -4,7 +4,9 @@ const useStyles = makeStyles(() => ({
   dashboardContainer: {
     justifyContent: "space-between",
   },
-  goods: {},
+  goods: {
+    alignContent: "center"
+  },
   production: {},
   delivery: {},
   circle: {},

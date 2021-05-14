@@ -21,21 +21,11 @@ const ShipmentTracking = () => {
   return (
     <div>
       <Grid container className={classes.dashboardContainer} spacing={2}>
-        <Grid item xs={8}>
+        <Grid item xs={12}>
           <Card variant="outlined">
             <CardContent>
               <div className={classes.goods}>
-                <Typography>Lieferstatus</Typography>
-              </div>
-            </CardContent>
-          </Card>
-        </Grid>
-        
-        <Grid item xs={4}>
-          <Card variant="outlined">
-            <CardContent>
-              <div className={classes.delivery}>
-                <DeliveryChart />
+                <Typography align="center">Lieferstatus</Typography>
               </div>
             </CardContent>
           </Card>
