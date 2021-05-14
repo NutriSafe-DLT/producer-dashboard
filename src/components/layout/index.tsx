@@ -95,6 +95,7 @@ export default function MainLayout(props) {
             </Typography>
           </Link>
           <div className={classes.grow} />
+          <Typography>Build number </Typography>
           <ConnectionStateIcon
             isOffline={userService.isInOfflineMode() && !isHyperledgerAvailable}
           />
