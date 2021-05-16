@@ -22,7 +22,7 @@ const ShipmentTracking = () => {
     <div>
       <Grid container className={classes.dashboardContainer} spacing={2}>
         <Grid item xs={12}>
-          <Card variant="outlined">
+          <Card variant="elevation">
             <CardContent>
               <div className={classes.goods}>
                 <Typography align="center">Lieferstatus</Typography>
@@ -31,14 +31,7 @@ const ShipmentTracking = () => {
           </Card>
         </Grid>
         <Grid item xs={12}>
-          <Card variant="outlined">
-            <CardContent>
-              
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12}>
-          <Card variant="outlined">
+          <Card variant="elevation">
             <CardContent>
             <Typography component="h1" variant="h5">
               Shipment data:
@@ -46,7 +39,7 @@ const ShipmentTracking = () => {
             <Form onSubmit={submitShipmentID}>
               <Controls.Input name="ID" label="Shipment ID"></Controls.Input>
               <Controls.Input name="PDC" label="Private Data Collection"></Controls.Input>
-              <Controls.Button type="submit" text="Submit" />
+              <Controls.Button type="submit" text="Submit"/>
             </Form>
             </CardContent>
           </Card>
