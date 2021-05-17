@@ -6,33 +6,18 @@ const ProductionChart = () => {
   const [hoverData, setHoverData] = useState(null);
   const [chartOptions, setChartOptions] = useState({
     chart: {
-      type: "bar",
-      inverted: true
+      type: "area",
     },
     title: {
-      text: "",
-    },
-    xAxis: {
-      categories: [
-        "Pasteurisierte Milch",
-        "Gallerte",
-        "Rohmilch",
-        "Sterilmilch",
-        "Rahm",
-        "Quark",
-        "Schnittlauch",
-        "Nusskernmischung",
-        'Getrocknete Tomaten',
-        'Meersalz'
-      ],
+      text: "Produktionsprozesse",
     },
     yAxis: {
-        min: 0,
-        title: {
-            text: ''
-        }
+      min: 0,
+      title: {
+        text: "",
+      },
     },
-    series: [{ data: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1] }],
+    series: [{ data: [3, 4, 2, 6] }],
     plotOptions: {
       series: {
         point: {
@@ -42,7 +27,7 @@ const ProductionChart = () => {
             },
           },
         },
-        showInLegend: false
+        showInLegend: false,
       },
     },
   });
