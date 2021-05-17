@@ -18,6 +18,15 @@ export class MetaDefinition {
 //     Type: "String",
 //   }
 // }
+export enum ShipmentStatus {
+  NoData = 0,
+  OrderReceived = 1,
+  Processing = 2,
+  DeliveringToHub = 3,
+  ReceivedAtHub = 4,
+  DeliveringToRecipient = 5,
+  Delivered = 6
+}
 
 export class ProductDefinition {
   productName: string;
