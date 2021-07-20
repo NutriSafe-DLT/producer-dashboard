@@ -1,14 +1,13 @@
-import { Button, IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
+import { IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import RequestInputDialog, { RequestInputObj } from "../base/RequestInputDialog";
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
 import productService from "../services/product-service"; 
-import Popup from "../../components/base/controls/Popup"
 import Controls from "../base/controls/Controls";
-import AddGoods from "../../components/goods/add-goods"
-import { Grid } from "@material-ui/core";
+import { useRouter } from "next/router";
 
 
 
@@ -22,12 +21,18 @@ interface InboxItem {
 }
 
 const ProductInbox = () => {
-  const [openPopup, setOpenPopup] = useState(false);
+  const router = useRouter();
   const [productState, setProductState] = useState<InboxItem[]>([]);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogObj>({
     isOpen: false,
     title: "",
     subtitle: "",
+  });
+  const [requestInputData, setInputData] = useState<RequestInputObj>({
+    title: "",
+    subtitle: "",
+    isOpen: false,
+    companyName: "",
   });
 
   const headCells = [
@@ -71,25 +76,24 @@ const ProductInbox = () => {
   
   return (
     <>
-      <div style={{display: 'flex'}}>
         <SearchInputField 
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           key="search-input"
         />
+
+      <Controls.Button
+      text="Add Goods"
+      onClick={() => {
+        setInputData({
+          isOpen: true,
+          title: "Add Goods",
+          subtitle: "Create new Products for youre Itemlist",
+          companyName: "",
+          onConfirm: () => router.push("/add-goods")
+        })
+        }}/>
      
-        <Controls.Button
-          text="+ Add Goods"
-          variant="outlined"
-          onClick={ () => setOpenPopup(true) }
-        />
-      </div>
-      <Popup
-        title="Add Goods"
-        openPopup={openPopup}
-        setPopup={setOpenPopup}>
-          <AddGoods/>
-      </Popup>
       <TblContainer>
         <TblHead />
         <TableBody>
@@ -144,6 +148,9 @@ const ProductInbox = () => {
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
       />
+      <RequestInputDialog
+        requestInputData={requestInputData}
+        setInputData={setInputData}/>
     </>
   );
 };
