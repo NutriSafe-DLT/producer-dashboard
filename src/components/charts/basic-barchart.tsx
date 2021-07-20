@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
-
-interface BarChartProps {
-  title: string;
-  color: string;
-  flipped?: boolean;
-  xAxis: string[];
-  yAxis: number[];
-}
+import { BarChartProps } from "./basic-barchart.module";
 
 const BarChart = ({
   title = "",

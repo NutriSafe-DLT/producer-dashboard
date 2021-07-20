@@ -8,6 +8,8 @@ import {
   TextField,
 } from "@material-ui/core";
 import Controls from "./controls/Controls";
+import { RequestInputDialogProps } from "./RequestInput.module";
+
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -22,19 +24,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
 }));
-
-interface RequestInputDialogProps {
-  requestInputData: RequestInputObj;
-  setInputData;
-}
-
-export interface RequestInputObj {
-  title: string;
-  subtitle: string;
-  isOpen: boolean;
-  companyName: string;
-  onConfirm?: () => void;
-}
 
 export default function RequestInputDialog(props: RequestInputDialogProps) {
   const { requestInputData, setInputData } = props;

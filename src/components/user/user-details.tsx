@@ -15,7 +15,8 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import * as React from "react";
-import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import ConfirmDialog from  "../base/ConfirmDialog";
+import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
 import userManagementService from "../services/user-management-service";
 import AddWhitelistToUserDialog from "./add-whitelist-to-user-dialog";
 

@@ -7,13 +7,9 @@ import { Clear } from "@material-ui/icons";
 import React, { useEffect } from "react";
 import Controls from "../base/controls/Controls";
 import { Option } from "../base/controls/Option";
+import { AddProductDefProps } from "./add-product-def-dialog.module";
 
-export interface AddProductDefProps {
-  open: boolean;
-  handleClose: Function;
-  handleSubmit: Function;
-  attributes: string[];
-}
+
 
 export default function AddProductDefDialog({
   open,

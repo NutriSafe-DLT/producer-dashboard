@@ -7,14 +7,7 @@ import React from "react";
 import { AttributeDefinition } from "../../model";
 import Controls from "../base/controls/Controls";
 import { useForm } from "../base/useForm";
-
-export interface AddAttributeDefProps {
-  open: boolean;
-  handleClose: Function;
-  handleSubmit: (
-    attributeDefinition: AttributeDefinition
-  ) => Promise<AxiosResponse>;
-}
+import { AddAttributeDefProps } from "./add-attribute-def-dialog.module";
 
 const initialValues: AttributeDefinition = {
   attributeName: "",

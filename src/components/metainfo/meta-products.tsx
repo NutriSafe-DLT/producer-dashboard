@@ -6,23 +6,9 @@ import {
   TableRow,
 } from "@material-ui/core";
 import React from "react";
+import { MetaProductsProps } from "./meta-products.module";
 
-export interface MetaProductsProps {
-  productNameToAttributesMap: any;
-  attributeToDataTypeMap: any;
-  // we cannot define anything here, since the products come as an object:
-  // {
-  //     "milk": [
-  //         "Quality"
-  //     ],
-  //     "delivery": [
-  //         "barcode",
-  //         "lotid",
-  //         "bestbeforedate",
-  //         "state"
-  //     ]
-  // }
-}
+
 
 const MetaProducts = ({
   productNameToAttributesMap,
