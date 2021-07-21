@@ -2,9 +2,14 @@ import { IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import RequestInputDialog, { RequestInputObj } from "../base/RequestInputDialog";
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
-import productService from "../services/product-service";
+import productService from "../services/product-service"; 
+import Controls from "../base/controls/Controls";
+import { useRouter } from "next/router";
+
+
 
 interface InboxItem {
   actualOwner: string;
@@ -16,11 +21,18 @@ interface InboxItem {
 }
 
 const ProductInbox = () => {
+  const router = useRouter();
   const [productState, setProductState] = useState<InboxItem[]>([]);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogObj>({
     isOpen: false,
     title: "",
     subtitle: "",
+  });
+  const [requestInputData, setInputData] = useState<RequestInputObj>({
+    title: "",
+    subtitle: "",
+    isOpen: false,
+    companyName: "",
   });
 
   const headCells = [
@@ -60,13 +72,28 @@ const ProductInbox = () => {
     // productService.acceptProductFromInbox(id).then(updateItems);
   }
 
+
+  
   return (
     <>
-      <SearchInputField
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        key="search-input"
-      />
+        <SearchInputField 
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          key="search-input"
+        />
+
+      <Controls.Button
+      text="Add Goods"
+      onClick={() => {
+        setInputData({
+          isOpen: true,
+          title: "Add Goods",
+          subtitle: "Create new Products for youre Itemlist",
+          companyName: "",
+          onConfirm: () => router.push("/add-goods")
+        })
+        }}/>
+     
       <TblContainer>
         <TblHead />
         <TableBody>
@@ -85,7 +112,7 @@ const ProductInbox = () => {
                 <TableCell>{product.unit}</TableCell>
                 <TableCell>
                   <IconButton
-                    color="primary"
+                    color="primary" 
                     onClick={() => {
                       setConfirmDialog({
                         isOpen: true,
@@ -121,6 +148,9 @@ const ProductInbox = () => {
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
       />
+      <RequestInputDialog
+        requestInputData={requestInputData}
+        setInputData={setInputData}/>
     </>
   );
 };
