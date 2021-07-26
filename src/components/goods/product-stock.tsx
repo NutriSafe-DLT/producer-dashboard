@@ -16,31 +16,17 @@ import {
   ReportProblem,
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import ConfirmDialog from "../base/ConfirmDialog";
+import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
 
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
 import productService from "../services/product-service";
-import RequestInputDialog, { RequestInputObj } from "../base/RequestInputDialog";
+import RequestInputDialog from "../base/RequestInputDialog";
+import { RequestInputObj } from "../base/RequestInputDialog.module";
 import Head from "next/head";
+import { ProductStockRowProps, StockItem } from "./product-stock.module";
 
-interface StockItem {
-  alarmFlag: boolean;
-  amount: number;
-  key: string;
-  productName: string;
-  unit: string;
-  attributes: any;
-}
-
-interface ProductStockRowProps {
-  row: StockItem;
-  setConfirmDialog;
-  setRequestInputDialog;
-  handleProductDeletion;
-  handleSetReceiver;
-  handleSetAlert;
-}
 
 function Row(props: ProductStockRowProps) {
   const {

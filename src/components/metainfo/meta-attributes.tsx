@@ -5,10 +5,8 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
+import { MetaAttributesProps } from "./meta-attribute.module";
 
-export interface MetaAttributesProps {
-  attributeToDataTypeMap: any;
-}
 
 const MetaAttributes = ({ attributeToDataTypeMap }: MetaAttributesProps) => {
   return (

@@ -4,19 +4,11 @@ import {
   DialogContent,
   DialogTitle,
 } from "@material-ui/core";
-import { AxiosResponse } from "axios";
 import React, { useEffect } from "react";
 import Controls from "../base/controls/Controls";
 import { Option } from "../base/controls/Option";
+import { AddWhitelistToUserDialogProps } from "./add-whitelist-to-user-dialog.module";
 
-export interface AddWhitelistToUserDialogProps {
-  open: boolean;
-  handleClose: Function;
-  handleSubmit: (any) => Promise<AxiosResponse>;
-  username: string;
-  userWhitelists: string[];
-  allWhitelists: string[];
-}
 
 const AddWhitelistToUserDialog = ({
   open,

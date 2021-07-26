@@ -1,24 +1,17 @@
 import { IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
-import RequestInputDialog, { RequestInputObj } from "../base/RequestInputDialog";
+import ConfirmDialog from "../base/ConfirmDialog";
+import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
+import RequestInputDialog from "../base/RequestInputDialog";
+import { RequestInputObj } from "../base/RequestInputDialog.module";
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
 import productService from "../services/product-service"; 
 import Controls from "../base/controls/Controls";
 import { useRouter } from "next/router";
+import { InboxItem } from "./product-inbox.module";
 
-
-
-interface InboxItem {
-  actualOwner: string;
-  alarmFlag: boolean;
-  amount: number;
-  key: string;
-  productName: string;
-  unit: string;
-}
 
 const ProductInbox = () => {
   const router = useRouter();

@@ -6,16 +6,9 @@ import {
   DialogTitle,
   Typography,
 } from "@material-ui/core";
-import { AxiosResponse } from "axios";
 import React from "react";
 import Controls from "../base/controls/Controls";
-
-export interface SetReceiverDialogProps {
-  open: boolean;
-  handleClose: Function;
-  handleSubmit: (id: string, receiver: string) => Promise<AxiosResponse>;
-  productId: string;
-}
+import { SetReceiverDialogProps } from "./set-receiver-dialog.module";
 
 const SetReceiverDialog = ({
   open,

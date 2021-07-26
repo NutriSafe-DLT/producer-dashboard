@@ -12,7 +12,8 @@ import {
 import { Delete } from "@material-ui/icons";
 import { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import ConfirmDialog from "../base/ConfirmDialog";
+import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
 import userManagementService from "../services/user-management-service";
 import AddFunctionToWhitelist from "./add-function-to-whitelist-dialog";
 
