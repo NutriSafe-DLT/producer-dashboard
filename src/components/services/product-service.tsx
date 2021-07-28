@@ -4,7 +4,7 @@ import { Product } from "../../model";
 import { AxiosResponse } from "axios";
 
 class ProductService {
-  private companyName: string = process.env.NEXT_PUBLIC_COMPANY_NAME;
+  public companyName: string = process.env.NEXT_PUBLIC_COMPANY_NAME;
 
   createProduct(product: Product) {
     return instance.post("/submit?function=createObject", product, {
