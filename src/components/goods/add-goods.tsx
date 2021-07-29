@@ -7,22 +7,10 @@ import { Option } from "../base/controls/Option";
 import { useForm } from "../base/useForm";
 import MetaInfoService from "../services/metainfo-service";
 import ProductService from "../services/product-service";
+import { IBasicProductInfo, metaDef } from "./add-goods.module";
 import BasicProductForm from "./basic-product-info-form";
 import DynamicProductInfo from "./dynamic-product-info";
 
-interface metaDef {
-  productNameToAttributesMap: any;
-  unitList: string[];
-  attributeToDataTypeMap: any;
-}
-
-interface IBasicProductInfo {
-  amount?: string;
-  unit?: string;
-  product?: string;
-  id?: string;
-  pdc?: string;
-}
 const initialBasicValues = {
   amount: "",
   unit: "",

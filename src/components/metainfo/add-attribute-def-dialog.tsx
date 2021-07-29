@@ -2,19 +2,12 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { AxiosResponse } from "axios";
 import React from "react";
 import { AttributeDefinition } from "../../model";
 import Controls from "../base/controls/Controls";
 import { useForm } from "../base/useForm";
+import { AddAttributeDefProps } from "./add-attribute-def-dialog.module";
 
-export interface AddAttributeDefProps {
-  open: boolean;
-  handleClose: Function;
-  handleSubmit: (
-    attributeDefinition: AttributeDefinition
-  ) => Promise<AxiosResponse>;
-}
 
 const initialValues: AttributeDefinition = {
   attributeName: "",

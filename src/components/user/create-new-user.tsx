@@ -4,15 +4,8 @@ import * as React from "react";
 import Controls from "../base/controls/Controls";
 import { Form, useForm } from "../base/useForm";
 import userManagementService from "../services/user-management-service";
-interface CreateUserProps {
-  existingUsernames: string[];
-}
+import { CreateUserProps, NewUser } from "./create-new-user.module";
 
-interface NewUser {
-  username: string;
-  password: string;
-  confirmPassword: string;
-}
 
 const initialValues: NewUser = {
   username: "",
