@@ -100,5 +100,19 @@ return(
             </ListItem>
           </Link>
         </List>
+        <Divider/>
+        <List>
+        <ListItem>
+            <ListItemText primary="Auditing" />
+          </ListItem>
+          <Link href="/auditing" passHref>
+            <ListItem button component="a">
+              <ListItemIcon>
+                <CreateIcon />
+              </ListItemIcon>
+              <ListItemText primary="trace transactions" />
+            </ListItem>
+          </Link>
+        </List>
         </>);
         }
