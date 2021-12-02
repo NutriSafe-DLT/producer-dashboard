@@ -11,9 +11,6 @@ on:
     tags:
       - v*
 
-  # Run tests for any PRs.
-  pull_request:
-
 env:
   IMAGE_NAME: producerdashboard
 
@@ -37,6 +34,7 @@ jobs:
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
+  # The preview repository (ghcr.io) is not yet available
   push:
     # Ensure test job passes before pushing image.
     needs: test

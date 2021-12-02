@@ -10,9 +10,10 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Delete, Info } from "@material-ui/icons";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import ConfirmDialog from "../base/ConfirmDialog";
+import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
 import userManagementService from "../services/user-management-service";
 import CreateWhitelistDialog from "./create-whitelist-dialog";
 
@@ -24,7 +25,6 @@ const WhitelistManagement = () => {
     title: "",
     subtitle: "",
   });
-  const router = useRouter();
 
   useEffect(() => {
     updateItems();
@@ -95,16 +95,11 @@ const WhitelistManagement = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>
-                  <IconButton
-                    color="primary"
-                    onClick={() =>
-                      router.push("/whitelists/" + whitelistName, undefined, {
-                        shallow: false,
-                      })
-                    }
-                  >
-                    <Info />
-                  </IconButton>
+                  <Link href={`/whitelists/${whitelistName}`} passHref>
+                    <IconButton color="primary">
+                      <Info />
+                    </IconButton>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}
