@@ -118,7 +118,7 @@
         - name: "Login to GitHub GHCR repository"
           become: yes
           become_user: deploy
-          command: "docker login docker.pkg.github.com -u {{ ghcr_user }} --password-stdin"
+          command: "docker login ghcr.io -u {{ ghcr_user }} --password-stdin"
           args:
             stdin: "{{ ghcr_password }}"
         
@@ -127,11 +127,9 @@
           become_user: deploy
           docker_container:
             name: deoni-dashboard
-            image: docker.pkg.github.com/nutrisafe-dlt/producer-dashboard/producerdashboard:merge
+            image: ghcr.io/codingsincethe80s/producerdashboard:dev-latest
             state: started
             recreate: yes
-            auto_remove: yes
-            pull: yes
             container_default_behavior: compatibility
             env_file: /home/deploy/containerenv.prod
             networks:

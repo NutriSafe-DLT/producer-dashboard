@@ -7,7 +7,6 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import Controls from "./controls/Controls";
-import { ConfirmDialogProps } from "./ConfirmDialog.module";
 
 const useStyles = makeStyles((theme) => ({
   dialog: {
@@ -22,6 +21,18 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
 }));
+
+interface ConfirmDialogProps {
+  confirmDialog: ConfirmDialogObj;
+  setConfirmDialog;
+}
+
+export interface ConfirmDialogObj {
+  title: string;
+  subtitle: string;
+  isOpen: boolean;
+  onConfirm?: () => void;
+}
 
 export default function ConfirmDialog(props: ConfirmDialogProps) {
   const { confirmDialog, setConfirmDialog } = props;
@@ -42,7 +53,7 @@ export default function ConfirmDialog(props: ConfirmDialogProps) {
         <Controls.Button
           text="Yes"
           color="secondary"
-          onClick={ () => {confirmDialog.onConfirm(); setConfirmDialog({ ...confirmDialog, isOpen: false })}}
+          onClick={confirmDialog.onConfirm}
         />
       </DialogActions>
     </Dialog>

@@ -9,10 +9,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Delete, Info } from "@material-ui/icons";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog from "../base/ConfirmDialog";
-import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
 import Controls from "../base/controls/Controls";
 import userManagementService from "../services/user-management-service";
 
@@ -23,6 +22,7 @@ const UserManagement = () => {
     title: "",
     subtitle: "",
   });
+  const router = useRouter();
 
   useEffect(() => {
     updateUsers();
@@ -49,9 +49,12 @@ const UserManagement = () => {
           }}
         >
           <Typography variant="h6">Users:</Typography>
-          <Link href="/users/create" passHref>
-            <Controls.Button text="Create User"></Controls.Button>
-          </Link>
+          <Controls.Button
+            onClick={() =>
+              router.push("/users/create", undefined, { shallow: false })
+            }
+            text="Create User"
+          ></Controls.Button>
         </div>
         <Table aria-label="simple table">
           <TableHead>
@@ -81,11 +84,16 @@ const UserManagement = () => {
                   </IconButton>
                 </TableCell>
                 <TableCell>
-                  <Link href="/users/" passHref>
-                    <IconButton color="primary">
-                      <Info />
-                    </IconButton>
-                  </Link>
+                  <IconButton
+                    color="primary"
+                    onClick={() =>
+                      router.push("/users/" + username, undefined, {
+                        shallow: false,
+                      })
+                    }
+                  >
+                    <Info />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
