@@ -1,31 +1,26 @@
 import { IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { Check, Clear } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog from "../base/ConfirmDialog";
-import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
-import RequestInputDialog from "../base/RequestInputDialog";
-import { RequestInputObj } from "../base/RequestInputDialog.module";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
-import productService from "../services/product-service"; 
-import Controls from "../base/controls/Controls";
-import { useRouter } from "next/router";
-import { InboxItem } from "./product-inbox.module";
+import productService from "../services/product-service";
 
+interface InboxItem {
+  actualOwner: string;
+  alarmFlag: boolean;
+  amount: number;
+  key: string;
+  productName: string;
+  unit: string;
+}
 
 const ProductInbox = () => {
-  const router = useRouter();
   const [productState, setProductState] = useState<InboxItem[]>([]);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogObj>({
     isOpen: false,
     title: "",
     subtitle: "",
-  });
-  const [requestInputData, setInputData] = useState<RequestInputObj>({
-    title: "",
-    subtitle: "",
-    isOpen: false,
-    companyName: "",
   });
 
   const headCells = [
@@ -65,28 +60,13 @@ const ProductInbox = () => {
     // productService.acceptProductFromInbox(id).then(updateItems);
   }
 
-
-  
   return (
     <>
-        <SearchInputField 
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          key="search-input"
-        />
-
-      <Controls.Button
-      text="Add Goods"
-      onClick={() => {
-        setInputData({
-          isOpen: true,
-          title: "Add Goods",
-          subtitle: "Create new Products for youre Itemlist",
-          companyName: "",
-          onConfirm: () => router.push("/add-goods")
-        })
-        }}/>
-     
+      <SearchInputField
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        key="search-input"
+      />
       <TblContainer>
         <TblHead />
         <TableBody>
@@ -105,7 +85,7 @@ const ProductInbox = () => {
                 <TableCell>{product.unit}</TableCell>
                 <TableCell>
                   <IconButton
-                    color="primary" 
+                    color="primary"
                     onClick={() => {
                       setConfirmDialog({
                         isOpen: true,
@@ -141,9 +121,6 @@ const ProductInbox = () => {
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
       />
-      <RequestInputDialog
-        requestInputData={requestInputData}
-        setInputData={setInputData}/>
     </>
   );
 };

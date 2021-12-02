@@ -1,10 +1,9 @@
 import instance from "../../axios";
 import authHeader from "./auth-header";
-import { Product } from "../../model";
-import { AxiosResponse } from "axios";
+import Product from "../../model/product";
 
 class ProductService {
-  public companyName: string = process.env.NEXT_PUBLIC_COMPANY_NAME;
+  private companyName: string = process.env.NEXT_PUBLIC_COMPANY_NAME;
 
   createProduct(product: Product) {
     return instance.post("/submit?function=createObject", product, {
@@ -12,9 +11,7 @@ class ProductService {
     });
   }
 
-  // should be changed by the backend at some point
-  // to return JSON, not String
-  productsInbox(): Promise<AxiosResponse<string>> {
+  productsInbox() {
     return instance.post(
       "/select?function=selectChaincode",
       {
@@ -28,7 +25,7 @@ class ProductService {
     );
   }
 
-  productsOutbox(): Promise<AxiosResponse<string>> {
+  productsOutbox() {
     return instance.post(
       "/select?function=selectChaincode",
       {
@@ -45,7 +42,7 @@ class ProductService {
     );
   }
 
-  productStock(): Promise<AxiosResponse<string>> {
+  productStock() {
     return instance.post(
       "/select?function=selectChaincode",
       {
@@ -62,44 +59,44 @@ class ProductService {
     );
   }
 
-  acceptProductFromInbox(productId: string) {
+  acceptProductFromInbox(id: string) {
     return instance.post(
       "/submit?function=changeOwner",
-      { id: productId },
+      { id },
       {
         headers: authHeader(),
       }
     );
   }
 
-  sendProductToOutboxForReceiver(productId: string, receiver: string) {
+  sendProductToOutboxForReceiver(id: string, receiver: string) {
     return instance.post(
       "/submit?function=setReceiver",
-      { id: productId, receiver },
+      { id, receiver },
       {
         headers: authHeader(),
       }
     );
   }
 
-  withdrawProductFromOutbox(productId: string) {
-    return this.sendProductToOutboxForReceiver(productId, "");
+  withdrawProductFromOutbox(id: string) {
+    return this.sendProductToOutboxForReceiver(id, "");
   }
 
-  activateAlarmForProduct(productId: string) {
+  activateAlarmForProduct(id: string) {
     return instance.post(
       "/submit?function=activateAlarm",
-      { id: productId },
+      { id },
       {
         headers: authHeader(),
       }
     );
   }
 
-  deleteProduct(productId: string) {
+  deleteProduct(id: string) {
     return instance.post(
       "/submit?function=deleteObject",
-      { id: productId },
+      { id },
       {
         headers: authHeader(),
       }

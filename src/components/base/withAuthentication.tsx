@@ -1,7 +1,7 @@
 import * as React from "react";
 import AuthService from "../services/user-service";
 
-const WithAuthorization = (props) => {
+const WithAuthentication = (props) => {
   const { requiredRole } = props;
   if (AuthService.hasRole(requiredRole)) return <>{props.children}</>;
   else
@@ -10,4 +10,4 @@ const WithAuthorization = (props) => {
     );
 };
 
-export default WithAuthorization;
+export default WithAuthentication;

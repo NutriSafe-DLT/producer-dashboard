@@ -11,15 +11,11 @@ export function useForm<T>(
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setErrors({});
     setValues({
       ...values,
       [name]: value,
     });
-    if (validateOnChange) {
-      
-      validate({ [name]: value });
-    }
+    if (validateOnChange) validate({ [name]: value });
   };
 
   const resetForm = () => {

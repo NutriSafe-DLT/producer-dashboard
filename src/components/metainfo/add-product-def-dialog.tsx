@@ -1,14 +1,20 @@
-import { List, ListItem } from "@material-ui/core";
+import React from "react";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { IconButton, MenuItem, Select } from "@material-ui/core";
 import { Clear } from "@material-ui/icons";
-import React, { useEffect } from "react";
-import Controls from "../base/controls/Controls";
-import { Option } from "../base/controls/Option";
-import { AddProductDefProps } from "./add-product-def-dialog.module";
 
+export interface AddProductDefProps {
+  open: boolean;
+  handleClose: Function;
+  handleSubmit: Function;
+  attributes: string[];
+}
 
 export default function AddProductDefDialog({
   open,
@@ -18,65 +24,91 @@ export default function AddProductDefDialog({
 }: AddProductDefProps) {
   const [productName, setProductName] = React.useState("");
   const [selectedAttributes, setSelectedAttributes] = React.useState([]);
-  const [attributeOptions, setAttributeOptions] = React.useState<Option[]>([]);
-
-  useEffect(() => {
-    // on change of selected attributes, update attribute options
-    const options: Option[] = [];
-    attributes
-      .filter((attr) => !selectedAttributes.includes(attr))
-      .map((option) => {
-        options.push({ id: option, title: option });
-      });
-    setAttributeOptions(options);
-  }, [selectedAttributes]);
 
   return (
-    <Dialog open={open} onClose={() => handleClose()}>
-      <DialogTitle>Create new Product Definition</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={() => handleClose()}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
       <DialogContent>
-        <Controls.Input
-          name="name"
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
           label="Product Name"
+          type="text"
+          fullWidth
           value={productName}
+          required
           onChange={(e) => setProductName(e.target.value)}
         />
         {selectedAttributes.map((attribute) => {
           return (
-            <List>
-              <ListItem>
-                {attribute}
-                <Controls.Button
-                  color="secondary"
-                  onClick={() =>
-                    setSelectedAttributes([
-                      ...selectedAttributes.filter((attr) => attr != attribute),
-                    ])
-                  }
-                >
-                  <Clear />
-                </Controls.Button>
-              </ListItem>
-            </List>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <TextField
+                margin="dense"
+                id={attribute}
+                label="Attribute"
+                fullWidth
+                value={attribute}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+              <IconButton
+                color="secondary"
+                onClick={() =>
+                  setSelectedAttributes([
+                    ...selectedAttributes.filter((attr) => attr != attribute),
+                  ])
+                }
+              >
+                <Clear />
+              </IconButton>
+            </div>
           );
         })}
-        <Controls.Select
-          name="newAttribute"
+        <TextField
+          margin="dense"
+          id="newAttribute"
           label="Attribute"
-          options={attributeOptions}
+          fullWidth
+          select
           onChange={(e) =>
             setSelectedAttributes([...selectedAttributes, e.target.value])
           }
-          value=""
-          error=""
-        />
+        >
+          {attributes
+            .filter((attr) => !selectedAttributes.includes(attr))
+            .map((option) => {
+              return (
+                <MenuItem key={option + "flexible"} value={option}>
+                  {option}
+                </MenuItem>
+              );
+            })}
+        </TextField>
       </DialogContent>
       <DialogActions>
-        <Controls.Button onClick={() => handleClose()} text="Cancel" />
-        <Controls.WaitingButton
-          onClick={() => handleSubmit(productName, selectedAttributes)}
-          text="Create"
-        />
+        <Button onClick={() => handleClose()} color="primary">
+          Cancel
+        </Button>
+        <Button
+          onClick={() =>
+            handleSubmit(productName, selectedAttributes)
+              .then(() => {
+                handleClose();
+                setProductName("");
+                setSelectedAttributes([]);
+              })
+              .catch((err) => alert("Something went wrong"))
+          }
+          color="primary"
+        >
+          Create
+        </Button>
       </DialogActions>
     </Dialog>
   );

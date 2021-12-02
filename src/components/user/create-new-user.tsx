@@ -1,66 +1,60 @@
-import { Container, Typography } from "@material-ui/core";
+import { Button, Container, TextField, Typography } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import { useRouter } from "next/router";
 import * as React from "react";
-import Controls from "../base/controls/Controls";
-import { Form, useForm } from "../base/useForm";
 import userManagementService from "../services/user-management-service";
-import { CreateUserProps, NewUser } from "./create-new-user.module";
-
-
-const initialValues: NewUser = {
-  username: "",
-  password: "",
-  confirmPassword: "",
-};
+interface CreateUserProps {
+  existingUsernames: string[];
+}
 
 export const CreateUser = ({ existingUsernames }: CreateUserProps) => {
+  const [newUser, setNewUser] = React.useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = React.useState("");
   const router = useRouter();
-  const validate = (fieldValues = values) => {
-    let tempErrors = { ...errors };
-    if ("username" in fieldValues) {
-      if (fieldValues.username === "")
-        tempErrors.username = "This field is required.";
-      //Using map to get exact check because Array.includes does NOT check for exact matches but uses beginswith-logic
-      var matchArray = existingUsernames.map((item) => {
-        return item === fieldValues.username;
-      });
-      if (matchArray.includes(true)) {
-        tempErrors.username =
-          "This username is already in use. Choose a different one";
-        } else {
-          tempErrors.username = "";
-        }
+
+  const validateUsername = (username: string) => {
+    if (existingUsernames.includes(username)) {
+      setError("This username is already in use! Choose a different one");
+    } else {
+      setError("");
     }
-    if ("password" in fieldValues) {
-      if (fieldValues.password === "")
-        tempErrors.password = "This field is required.";
-      // if doesnt match password guidelines, error
-    }
-    if ("confirmPassword" in fieldValues) {
-      if (fieldValues.confirmPassword !== values.password) {
-        tempErrors.confirmPassword = "Please repeat the password correctly";
-      } else {
-        tempErrors.confirmPassword = "";
-      }
-    }
-    setErrors({
-      ...tempErrors,
-    });
-    return Object.values(tempErrors).every((x) => x == "");
   };
 
-  const { values, errors, setErrors, handleInputChange, resetForm } = useForm(
-    initialValues,
-    true,
-    validate
-  );
+  const validatePasswordConfirm = (confirmPassword: string) => {
+    if (newUser.password != confirmPassword) {
+      setError("Please repeat the password to confirm!");
+    } else {
+      setError("");
+    }
+  };
+
+  const validatePassword = (password: string) => {
+    if (password.length < 8) {
+      setError("Passwords must be at least 8 characters long");
+    } else {
+      setError("");
+    }
+  };
+
+  const clearInputs = () => {
+    setNewUser({
+      ...newUser,
+      username: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
 
   const submitUser = () => {
-    if (!errors) {
+    if (!error) {
       userManagementService
-        .createUser(values.username, values.password)
+        .createUser(newUser.username, newUser.password)
         .then((res) => {
-          resetForm();
+          clearInputs();
           router.push("/users", undefined, { shallow: false });
         });
     }
@@ -71,30 +65,55 @@ export const CreateUser = ({ existingUsernames }: CreateUserProps) => {
       <Typography component="h1" variant="h5">
         Create new User
       </Typography>
-      <Form onSubmit={submitUser}>
-        <Controls.Input
-          name="username"
-          label="Username"
-          value={values.username}
-          onChange={handleInputChange}
-          error={errors.username}
-        />
-        <Controls.Input
-          name="password"
-          label="Password"
-          value={values.password}
-          onChange={handleInputChange}
-          error={errors.password}
-        />
-        <Controls.Input
-          name="confirmPassword"
-          label="Confirm password"
-          value={values.confirmPassword}
-          onChange={handleInputChange}
-          error={errors.confirmPassword}
-        />
-        <Controls.Button type="submit" text="Create User" />
-      </Form>
+      {error === "" ? <div /> : <Alert severity="error">{error}</Alert>}
+      <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        id="username"
+        label="Username"
+        name="username"
+        value={newUser.username}
+        onChange={(e) => {
+          setNewUser({ ...newUser, username: e.target.value });
+          validateUsername(e.target.value);
+        }}
+        autoFocus
+      />
+      <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        name="password"
+        label="Password"
+        type="password"
+        id="password"
+        value={newUser.password}
+        onChange={(e) => {
+          setNewUser({ ...newUser, password: e.target.value });
+          validatePassword(e.target.value);
+        }}
+      />
+      <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        name="Confirm password"
+        label="Confirm Password"
+        type="password"
+        id="Confirm_password"
+        value={newUser.confirmPassword}
+        onChange={(e) => {
+          setNewUser({ ...newUser, confirmPassword: e.target.value });
+          validatePasswordConfirm(e.target.value);
+        }}
+      />
+      <Button color="primary" variant="contained" onClick={submitUser}>
+        Create User
+      </Button>
     </Container>
   );
 };

@@ -44,9 +44,7 @@ const AddFunctionToWhitelist = ({
           Cancel
         </Button>
         <Controls.WaitingButton
-          onClick={() =>
-            handleSubmit({ whitelist, functionName: functionName })
-          }
+          onClick={() => handleSubmit({ whitelist, func: functionName })}
           text="Confirm"
         />
       </DialogActions>

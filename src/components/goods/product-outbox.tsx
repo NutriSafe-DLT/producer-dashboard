@@ -1,13 +1,19 @@
 import { IconButton, TableBody, TableCell, TableRow } from "@material-ui/core";
 import { ArrowBack, Delete, ReportProblem } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog from "../base/ConfirmDialog";
-import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
 import productService from "../services/product-service";
-import { OutboxItem } from "./product-outbox.module";
 
+interface OutboxItem {
+  receiver: string;
+  alarmFlag: boolean;
+  amount: number;
+  key: string;
+  productName: string;
+  unit: string;
+}
 
 const ProductOutbox = () => {
   const [productState, setProductState] = useState<OutboxItem[]>([]);
@@ -22,12 +28,8 @@ const ProductOutbox = () => {
   }, []);
 
   function updateItems() {
-    productService.productsOutbox().then((res:any) => {
-      let array: OutboxItem[] = [];
-      res.data.map((element) => {
-        array.push(JSON.parse(element));
-      });
-      setProductState(array);
+    productService.productsOutbox().then((res) => {
+      if (res.data.length > 0) setProductState([JSON.parse(res.data)]);
     });
   }
 

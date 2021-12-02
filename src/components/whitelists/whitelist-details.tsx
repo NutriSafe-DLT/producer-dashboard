@@ -12,8 +12,7 @@ import {
 import { Delete } from "@material-ui/icons";
 import { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog from "../base/ConfirmDialog";
-import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
+import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
 import userManagementService from "../services/user-management-service";
 import AddFunctionToWhitelist from "./add-function-to-whitelist-dialog";
 
@@ -38,15 +37,15 @@ export const WhitelistDetails = ({
     setFunctionNames(whitelistAPIFunctions);
   }, []);
 
-  function handleRemoveFunctionFromWhitelist(
-    functionName: string
+  function handleRemoveFuncFromWhitelist(
+    func: string
   ): Promise<AxiosResponse<any>> {
     const promise = userManagementService.unlinkFunctionFromWhitelist({
       whitelistName: whitelistName,
-      functionName,
+      func,
     });
     promise.then(() => {
-      const filteredList = functionNames.filter((f) => f != functionName);
+      const filteredList = functionNames.filter((f) => f != func);
       setFunctionNames(filteredList);
     });
     return promise;
@@ -96,7 +95,7 @@ export const WhitelistDetails = ({
                         title: `Are your sure you want to remove ${functionName}?`,
                         subtitle: "",
                         onConfirm: () =>
-                          handleRemoveFunctionFromWhitelist(functionName),
+                          handleRemoveFuncFromWhitelist(functionName),
                       });
                     }}
                   >
