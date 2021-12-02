@@ -21,8 +21,8 @@ class AuthService {
   }
 
   getCurrentUser() {
-    // const encodedJWT = localStorage.getItem("JWT");
-    // const decodedJWT = jwt.decode(encodedJWT, { complete: true });
+     const encodedJWT = localStorage.getItem("JWT");
+     const decodedJWT = jwt.decode(encodedJWT, { complete: true }) as any;
     // decodedJWT.payload.exp > Date.now();
   }
 

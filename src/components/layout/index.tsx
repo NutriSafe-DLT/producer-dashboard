@@ -13,20 +13,17 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { useStyles, useTheme } from "./styles";
 import userService from "../services/user-service";
 import ConnectionStateIcon from "../base/controls/ConnectionStateIcon";
-import axiosMetricsInstance from "../../prometheusAxios";
+import useCurrentMetrics from "../base/useCurrentMetrics";
 import Link from "next/link";
 import Controls from "../base/controls/Controls";
 import BurgerNavigation from "../base/BurgerNavigation";
 
+
 export default function MainLayout(props) {
-  const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [time, setTime] = React.useState(new Date().toLocaleTimeString());
-  const [isHyperledgerAvailable, setIsHyperledgerAvailable] = React.useState(
-    false
-  );
+ 
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -37,32 +34,9 @@ export default function MainLayout(props) {
   };
 
   //This is a continual check so it triggers every X seconds (see constant) while the app is running
-  useEffect(() => {
-    axiosMetricsInstance
-      .get("/api/v1/query", { params: { query: "fabric_version" } })
-      .then(() => {
-        setIsHyperledgerAvailable(true);
-      })
-      .catch((reason) => {
-        if (reason.response && reason.response.status) {
-          //usually 4XX or 5XX errors, but that only means that there is an issue with prometheus, not necessarily with fabric itself
-          setIsHyperledgerAvailable(true);
-        } else {
-          console.log("Endpoint query failed with status: " + reason);
-          setIsHyperledgerAvailable(false);
-        }
-      });
-
-    const timeout = setTimeout(() => {
-      setTime(new Date().toLocaleTimeString());
-    }, SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS * 1000);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [time]);
-
-  return (
+  
+  const isHyperledgerAvailable = useCurrentMetrics();
+  return (  
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
