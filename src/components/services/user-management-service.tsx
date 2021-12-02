@@ -2,8 +2,6 @@ import instance from "../../axios";
 import authHeader from "./auth-header";
 
 class UserManagementService {
-  // CREATE, UPDATE, DELETE
-  // Users:
   createUser(username: string, password: string) {
     return instance.post(
       "/submit?function=createUser",
@@ -64,21 +62,20 @@ class UserManagementService {
     );
   }
 
-  // function is a keyword in Typescript, so func is used
-  linkFunctionToWhitelist({ whitelistName, func }) {
+  linkFunctionToWhitelist({ whitelistName, functionName }) {
     return instance.post(
       "/submit?function=linkFunctionToWhitelist",
-      { whitelist: whitelistName, function: func },
+      { whitelist: whitelistName, function: functionName },
       {
         headers: authHeader(),
       }
     );
   }
 
-  unlinkFunctionFromWhitelist({ whitelistName, func }) {
+  unlinkFunctionFromWhitelist({ whitelistName, functionName }) {
     return instance.post(
       "/submit?function=unlinkFunctionFromWhitelist",
-      { whitelist: whitelistName, function: func },
+      { whitelist: whitelistName, function: functionName },
       {
         headers: authHeader(),
       }

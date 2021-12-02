@@ -6,6 +6,7 @@ import {
   TableCell,
   TableRow,
   Typography,
+  Tooltip,
 } from "@material-ui/core";
 import {
   ArrowForward,
@@ -15,32 +16,23 @@ import {
   ReportProblem,
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
-import ConfirmDialog, { ConfirmDialogObj } from "../base/ConfirmDialog";
+import ConfirmDialog from "../base/ConfirmDialog";
+import { ConfirmDialogObj } from "../base/ConfirmDialog.module";
+
 import SearchInputField from "../base/searchInput";
 import useTable from "../base/useTable";
 import productService from "../services/product-service";
+import RequestInputDialog from "../base/RequestInputDialog";
+import { RequestInputObj } from "../base/RequestInputDialog.module";
+import Head from "next/head";
+import { ProductStockRowProps, StockItem } from "./product-stock.module";
 
-interface StockItem {
-  alarmFlag: boolean;
-  amount: number;
-  key: string;
-  productName: string;
-  unit: string;
-  attributes: any;
-}
-
-interface ProductStockRowProps {
-  row: StockItem;
-  setConfirmDialog;
-  handleProductDeletion;
-  handleSetReceiver;
-  handleSetAlert;
-}
 
 function Row(props: ProductStockRowProps) {
   const {
     row,
     setConfirmDialog,
+    setRequestInputDialog,
     handleProductDeletion,
     handleSetReceiver,
     handleSetAlert,
@@ -53,6 +45,7 @@ function Row(props: ProductStockRowProps) {
         style={{
           backgroundColor: row.alarmFlag ? "lightpink" : undefined,
         }}
+        key={props.row.key}
       >
         <TableCell>
           <IconButton
@@ -71,44 +64,57 @@ function Row(props: ProductStockRowProps) {
           {row.alarmFlag ? (
             <div />
           ) : (
+              <Tooltip title="Start alert for this product">
+                <IconButton
+                  aria-label="expand row"
+                  size="small"
+                  onClick={() => {
+                    setConfirmDialog({
+                      isOpen: true,
+                      title: `Are your sure you want to start an alert for this product (${row.key})?`,
+                      subtitle: "This can cause major consequences",
+                      onConfirm: () => handleSetAlert(row.key),
+                    });
+                  }}
+                >
+                  <ReportProblem />
+                </IconButton>
+              </Tooltip>
+          )}
+          <Tooltip title="Delete product">
             <IconButton
               aria-label="expand row"
               size="small"
               onClick={() => {
                 setConfirmDialog({
                   isOpen: true,
-                  title: `Are your sure you want to start an alert for this product (${row.key})?`,
-                  subtitle: "This can cause major consequences",
-                  onConfirm: () => handleSetAlert(row.key),
+                  title: `Are your sure you want to delete this product (${row.key})?`,
+                  subtitle: "This action is irreversible",
+                  onConfirm: () => handleProductDeletion(row.key),
                 });
               }}
             >
-              <ReportProblem />
+              <Delete />
             </IconButton>
-          )}
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => {
-              setConfirmDialog({
-                isOpen: true,
-                title: `Are your sure you want to delete this product (${row.key})?`,
-                subtitle: "This action is irreversible",
-                onConfirm: () => handleProductDeletion(row.key),
-              });
-            }}
-          >
-            <Delete />
-          </IconButton>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() =>
-              console.log("IMPLEMENT setReceiver stuff, maybe with useDialog?")
-            }
-          >
-            <ArrowForward />
-          </IconButton>
+          </Tooltip>
+          <Tooltip title="Transfer product to other company">
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => {
+                setRequestInputDialog({
+                  isOpen: true,
+                  title: `Which company do you want this to transfer to?`,
+                  subtitle: "Please type the name or press no to cancel.",
+                  companyName: "",
+                  onConfirm: (companyName) => handleSetReceiver(row.key, companyName),
+                });
+                //console.log("IMPLEMENT setReceiver stuff, maybe with useDialog?")              
+              }}
+            >
+              <ArrowForward />
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow
@@ -143,6 +149,12 @@ const ProductStock = () => {
     title: "",
     subtitle: "",
   });
+  const [requestInputDialog, setRequestInputDialog] = useState<RequestInputObj>({
+    isOpen: false,
+    title: "",
+    subtitle: "",
+    companyName: "None selected"
+  });
   const headCells = [
     { id: "toggle", label: "Text" },
     { id: "key", label: "Key", enableSorting: true },
@@ -165,7 +177,7 @@ const ProductStock = () => {
   }, []);
 
   function updateItems() {
-    productService.productStock().then((res) => {
+    productService.productStock().then((res:any) => {
       let array: StockItem[] = [];
       res.data.map((element) => {
         array.push(JSON.parse(element));
@@ -204,6 +216,7 @@ const ProductStock = () => {
                 key={product.key}
                 row={product}
                 setConfirmDialog={setConfirmDialog}
+                setRequestInputDialog={setRequestInputDialog}
                 handleProductDeletion={handleProductDeletion}
                 handleSetReceiver={handleSetReceiver}
                 handleSetAlert={handleSetAlert}
@@ -216,6 +229,10 @@ const ProductStock = () => {
       <ConfirmDialog
         setConfirmDialog={setConfirmDialog}
         confirmDialog={confirmDialog}
+      />
+      <RequestInputDialog
+        setInputData={setRequestInputDialog}
+        requestInputData={requestInputDialog} 
       />
     </>
   );
