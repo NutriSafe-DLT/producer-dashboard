@@ -20,14 +20,10 @@ import BurgerNavigation from "../base/BurgerNavigation";
 
 
 export default function MainLayout(props) {
-  const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [time, setTime] = React.useState(new Date().toLocaleTimeString());
-  const [isHyperledgerAvailable, setIsHyperledgerAvailable] = React.useState(
-    false
-  );
+ 
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -38,9 +34,9 @@ export default function MainLayout(props) {
   };
 
   //This is a continual check so it triggers every X seconds (see constant) while the app is running
-  useCurrentMetrics();
-
-  return (
+  
+  const isHyperledgerAvailable = useCurrentMetrics();
+  return (  
     <div className={classes.root}>
       <CssBaseline />
       <AppBar

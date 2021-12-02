@@ -1,12 +1,13 @@
 import axiosMetricsInstance from "../../prometheusAxios";
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
-const [time, setTime] = React.useState(new Date().toLocaleTimeString());
-const [isHyperledgerAvailable, setIsHyperledgerAvailable] = React.useState(false);
-const [metricsList, setMetricsList] = React.useState(["up","fabric_version"]);
+
 
 function useCurrentMetrics() {
+    const [time, setTime] = React.useState(new Date().toLocaleTimeString());
+    const [isHyperledgerAvailable, setIsHyperledgerAvailable] = React.useState(false);
+    const [metricsList, setMetricsList] = React.useState(["up","fabric_version"]);
     //This is a continual check so it triggers every X seconds (see constant) while the app is running
     useEffect(() => {
         axiosMetricsInstance.get("/api/v1/query",{params: {query:"fabric_version"}}).
@@ -30,6 +31,8 @@ function useCurrentMetrics() {
       clearTimeout(timeout);
     }
   }, [time]);
+  
+  return isHyperledgerAvailable;
 }
 
 
