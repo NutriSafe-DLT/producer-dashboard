@@ -17,6 +17,7 @@ import useCurrentMetrics from "../base/useCurrentMetrics";
 import Link from "next/link";
 import Controls from "../base/controls/Controls";
 import BurgerNavigation from "../base/BurgerNavigation";
+import metadata from '../../buildmetadata.json';
 
 
 export default function MainLayout(props) {
@@ -69,6 +70,7 @@ export default function MainLayout(props) {
             </Typography>
           </Link>
           <div className={classes.grow} />
+          <Typography>{`Version ${metadata.buildMajor}.${metadata.buildMinor}.${metadata.buildRevision} ${metadata.buildTag}`}</Typography>
           <ConnectionStateIcon
             isOffline={userService.isInOfflineMode() && !isHyperledgerAvailable}
           />
