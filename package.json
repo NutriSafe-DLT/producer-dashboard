@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "set NODE_OPTIONS='--inspect' && next dev",
-    "build": "next build",
+    "build": "node increment-buildnumber.js && next build",
     "start": "next start",
     "build-start": "next build && next start"
   },

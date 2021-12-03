@@ -17,6 +17,7 @@ import axiosMetricsInstance from "../../prometheusAxios";
 import Link from "next/link";
 import Controls from "../base/controls/Controls";
 import BurgerNavigation from "../base/BurgerNavigation";
+import metadata from '../../buildmetadata.json';
 
 export default function MainLayout(props) {
   const SECONDS_TO_WAIT_BETWEEN_STATUSCHECKS = 5;
@@ -95,7 +96,7 @@ export default function MainLayout(props) {
             </Typography>
           </Link>
           <div className={classes.grow} />
-          <Typography>Build number </Typography>
+          <Typography>{`Version ${metadata.buildMajor}.${metadata.buildMinor}.${metadata.buildRevision} ${metadata.buildTag}`}</Typography>
           <ConnectionStateIcon
             isOffline={userService.isInOfflineMode() && !isHyperledgerAvailable}
           />
